@@ -1,5 +1,5 @@
 {
-  "name": "aws-sdk-sigv4-fetch",
+  "name": "aws-sigv4-fetch",
   "version": "1.0.0",
   "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
   "main": "dist/index.js",
