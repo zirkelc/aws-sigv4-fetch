@@ -23,9 +23,9 @@ const url = 'https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql';
 const body = { a: 1 };
 
 const response = await fetch(url, {
-	method: 'post',
-	body: JSON.stringify(body),
-	headers: {'Content-Type': 'application/json'}
+  method: 'post',
+  body: JSON.stringify(body),
+  headers: {'Content-Type': 'application/json'}
 });
 
 const data = await response.json();
@@ -42,24 +42,24 @@ const fetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
 const url = 'https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql';
 
 const query = `
-	mutation CreateItem($input: CreateItemInput!) {
-		createItem(input: $input) {
-			id
-			createdAt
-			updatedAt
-			name
-		}
-	}
+  mutation CreateItem($input: CreateItemInput!) {
+    createItem(input: $input) {
+      id
+      createdAt
+      updatedAt
+      name
+    }
+  }
 `;
 
 const variables = {
-	input: {
-		name,
-	},
+  input: {
+    name,
+  },
 };
 
 const client = new GraphQLClient(url, {
-	fetch: createSignedFetcher({ service: 'appsync', region }),
+  fetch: createSignedFetcher({ service: 'appsync', region }),
 });
 
 const result = await client.request(query, variables);
