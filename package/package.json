@@ -1,0 +1,39 @@
+{
+  "name": "aws-sigv4-fetch",
+  "version": "1.1.1",
+  "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zirkelc/aws-sigv4-fetch.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zirkelc/aws-sigv4-fetch/issues"
+  },
+  "homepage": "https://github.com/zirkelc/aws-sigv4-fetch#readme",
+  "dependencies": {
+    "@aws-crypto/sha256-js": "^2.0.1",
+    "@aws-sdk/client-cognito-identity-provider": "^3.58.0",
+    "@aws-sdk/credential-provider-node": "^3.55.0",
+    "@aws-sdk/protocol-http": "^3.55.0",
+    "@aws-sdk/signature-v4": "^3.55.0",
+    "@aws-sdk/types": "^3.55.0",
+    "node-fetch": "^3.2.3"
+  },
+  "devDependencies": {
+    "@tsconfig/node14": "^1.0.1",
+    "typescript": "^4.6.3"
+  }
+}
