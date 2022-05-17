@@ -2,7 +2,7 @@ import { SignatureV4 } from '@aws-sdk/signature-v4';
 import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import { HttpRequest } from '@aws-sdk/protocol-http';
 import { Sha256 } from '@aws-crypto/sha256-js';
-import fetch, { Headers } from 'node-fetch';
+import fetch, { Headers } from 'cross-fetch';
 import { Credentials, Provider } from "@aws-sdk/types";
 
 type SignedFetcherInit = {
@@ -25,7 +25,9 @@ export const createSignedFetcher: CreateSignedFetcher =  ({ credentials, service
 	return async (input, init?) => {
 		const url = new URL(typeof input === 'string' ? input : input.url);
 
-		const headers = new Headers(init!.headers);
+		const headers = new Map<string, string>();
+		// workaround because Headers.entries() is not available in cross-fetch
+		new Headers(init!.headers).forEach((value, key) => headers.set(key, value));
 		// host is required by AWS Signature V4: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 		headers.set('host', url.host);
 
