@@ -3,12 +3,13 @@ import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import { HttpRequest } from '@aws-sdk/protocol-http';
 import { Sha256 } from '@aws-crypto/sha256-js';
 import fetch, { Headers } from 'cross-fetch';
-import { Credentials, Provider } from "@aws-sdk/types";
+import { Credentials, Provider, QueryParameterBag } from "@aws-sdk/types";
+import { parseQueryString } from '@aws-sdk/querystring-parser';
 
 type SignedFetcherInit = {
-	credentials?: Credentials | Provider<Credentials>;
 	service: string;
-	region: string;
+	region?: string;
+	credentials?: Credentials | Provider<Credentials>;
 }
 
 type CreateSignedFetcher = (init: SignedFetcherInit) => typeof fetch;
@@ -21,7 +22,7 @@ type CreateSignedFetcher = (init: SignedFetcherInit) => typeof fetch;
  * @param init 
  * @returns fetch
  */
-export const createSignedFetcher: CreateSignedFetcher =  ({ credentials, service, region }): typeof fetch => {
+export const createSignedFetcher: CreateSignedFetcher =  ({ service, region = 'us-east-1', credentials }): typeof fetch => {
 	return async (input, init?) => {
 		const url = new URL(typeof input === 'string' ? input : input.url);
 
@@ -35,8 +36,9 @@ export const createSignedFetcher: CreateSignedFetcher =  ({ credentials, service
 			hostname: url.hostname,
 			path: url.pathname,
 			protocol: url.protocol,
-			method: init!.method,
+			method: init!.method.toUpperCase(), // method must be uppercase
 			body: init!.body,
+			query: parseQueryString(url.search),
 			headers: Object.fromEntries(headers.entries())
 		});
 	

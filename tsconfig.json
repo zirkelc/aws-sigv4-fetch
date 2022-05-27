@@ -5,6 +5,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "declaration": true,
+    "allowJs": true,
+    "strict": false
   },
   "include": [
     "src/**/*.ts",
