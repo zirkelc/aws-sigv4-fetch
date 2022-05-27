@@ -13,7 +13,7 @@ npm install --save aws-sigv4-fetch
 ```
 
 ## Usage
-This package exports a function `createSignedFetcher` that returns a `fetch` function to automtaically sign HTTP requests with AWS Signature V4 for the given AWS service and region. The credentials can be passed to the function directly, or they will be retrieved from the environment via `defaultProvider()` from package [`@aws-sdk/credential-provider-node`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_credential_provider_node.html).
+This package exports a function `createSignedFetcher` that returns a `fetch` function to automatically sign HTTP requests with AWS Signature V4 for the given AWS service and region. The credentials can be passed to the function directly, or they will be retrieved from the environment by `defaultProvider()` from package [`@aws-sdk/credential-provider-node`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_credential_provider_node.html).
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
 
@@ -32,7 +32,7 @@ const data = await response.json();
 ```
 
 ### Sign GraphQL Requests with `graphql-request`
-The package [`graphql-request`](https://www.npmjs.com/package/graphql-request) allows to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method) as option:
+If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch`option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
