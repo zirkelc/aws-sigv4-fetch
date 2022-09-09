@@ -24,7 +24,7 @@ type CreateSignedFetcher = (init: SignedFetcherInit) => typeof fetch;
  */
 export const createSignedFetcher: CreateSignedFetcher =  ({ service, region = 'us-east-1', credentials }): typeof fetch => {
 	return async (input, init?) => {
-		const url = new URL(typeof input === 'string' ? input : input.url);
+		const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
 
 		const headers = new Map<string, string>();
 		// workaround because Headers.entries() is not available in cross-fetch
