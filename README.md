@@ -1,4 +1,6 @@
-[![npm version](https://badge.fury.io/js/aws-sigv4-fetch.svg)](https://badge.fury.io/js/aws-sigv4-fetch)
+![npm](https://img.shields.io/npm/v/aws-sigv4-fetch?label=aws-sigv4-fetch)
+![npm](https://img.shields.io/npm/dt/aws-sigv4-fetch)
+
 # aws-sigv4-fetch
 AWS SignatureV4 fetch API function to automatically sign HTTP request with given AWS credentials. Built entirely on the newest version of the official [AWS SDK for JS](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html).
 
