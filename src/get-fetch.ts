@@ -4,11 +4,11 @@ export const getFetchFn = (customFetchFn?: typeof fetch): typeof fetch => {
 	}
 
 	if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
-		return window.fetch; // TODO bind?
+		return window.fetch.bind(window);
 	}
 
 	if (typeof globalThis !== 'undefined' && typeof globalThis.fetch === 'function') {
-		return globalThis.fetch; // TODO bind?
+		return globalThis.fetch.bind(globalThis);
 	}
 
 	throw new Error('No fetch implementation found');
