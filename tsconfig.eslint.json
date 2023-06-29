@@ -1,0 +1,18 @@
+{
+  // ESLint specific config
+  // https://typescript-eslint.io/linting/typed-linting/monorepos
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  // https://github.com/typescript-eslint/typescript-eslint/issues/967#issuecomment-531817014
+  "include": [
+    ".eslintrc.js",
+    "jest.config.js",
+    "src/**/*.ts",
+    "__tests__/**/*.ts",
+  ],
+  "exclude": [
+    "**/node_modules/*",
+  ]
+}

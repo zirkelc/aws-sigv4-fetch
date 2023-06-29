@@ -1,12 +1,10 @@
 /// <reference lib="dom" />
-import type { Credentials, Provider } from "@aws-sdk/types";
-
-// export type Fetch = typeof fetch | ((input: RequestInfo | URL, init?: RequestInit) => Promise<Response>);
+import type { AwsCredentialIdentity, Provider } from "@aws-sdk/types";
 
 export type SignedFetcherOptions = {
 	service: string;
 	region?: string;
-	credentials?: Credentials | Provider<Credentials>;
+	credentials?: AwsCredentialIdentity | Provider<AwsCredentialIdentity>;
 	fetch?: typeof fetch;
 }
 

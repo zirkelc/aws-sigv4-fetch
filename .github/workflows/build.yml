@@ -1,0 +1,91 @@
+name: "Build"
+
+on:
+	push:
+  pull_request:
+
+jobs:
+  # Triggered by a PR or a comment on a PR
+  unit-tests:
+    name: Unit Tests
+    if: github.event_name == 'pull_request' || ( github.event.issue.pull_request && contains(github.event.comment.body, '/unit') )
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get PR details
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+
+      - name: Set commit status as pending
+        uses: myrotvorets/set-commit-status-action@master
+        if: github.event_name != 'pull_request'
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+
+      - name: Checkout ${{ steps.comment-branch.outputs.head_ref }}
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - name: Setup Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@flyweightrocks'
+
+      - name: Configure AWS Credentials
+        run: |
+            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile default
+            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile default
+            aws configure set region ${{ secrets.AWS_REGION }} --profile default
+
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+      #     aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      #     aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install
+        id: install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm ci
+          npm run bootstrap
+
+      # TODO run test in parallel without --runInBand
+      - name: 'Unit Tests'
+        if: ${{ success() || steps.install.conclusion == 'success' }}
+        run: |
+          npm run test:unit
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        if: always() && github.event_name != 'pull_request'
+        with:
+          script: |
+            const name = '${{ github.workflow	}}';
+            const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+            const success = '${{ job.status }}' === 'success';
+            const body = `${name}: ${success ? 'succeeded ✅' : 'failed ❌'}\n${url}`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+
+      - name: Set final commit status
+        uses: myrotvorets/set-commit-status-action@master
+        if: always() && github.event_name != 'pull_request'
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
