@@ -1,6 +1,12 @@
 {
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "quickfix.rome": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "rome.rome",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "rome.rome",
   }
 }

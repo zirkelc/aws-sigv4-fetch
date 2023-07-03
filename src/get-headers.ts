@@ -8,15 +8,15 @@ export const getHeaders = (init?: HeadersInit) => {
     return headers;
   }
 
-  if ("forEach" in init && typeof init.forEach === "function") {
+  if ('forEach' in init && typeof init.forEach === 'function') {
     init.forEach((value, key) => headers.set(key, value));
     return headers;
   }
 
-  if (typeof init === "object") {
+  if (typeof init === 'object') {
     Object.entries(init).forEach(([key, value]) => headers.set(key, value));
     return headers;
   }
 
-  throw new Error("Invalid headers");
+  throw new Error('Invalid headers');
 };
