@@ -1,15 +1,15 @@
-import { SignatureV4 } from '@aws-sdk/signature-v4';
+import { Sha256 } from '@aws-crypto/sha256-js';
 import { defaultProvider } from '@aws-sdk/credential-provider-node';
 import { HttpRequest } from '@aws-sdk/protocol-http';
-import { Sha256 } from '@aws-crypto/sha256-js';
-import fetch, { Headers } from 'cross-fetch';
-import { Credentials, Provider, QueryParameterBag } from "@aws-sdk/types";
 import { parseQueryString } from '@aws-sdk/querystring-parser';
+import { SignatureV4 } from '@aws-sdk/signature-v4';
+import { AwsCredentialIdentity, Provider } from "@aws-sdk/types";
+import fetch, { Headers } from 'cross-fetch';
 
 type SignedFetcherInit = {
 	service: string;
 	region?: string;
-	credentials?: Credentials | Provider<Credentials>;
+	credentials?: AwsCredentialIdentity | Provider<AwsCredentialIdentity>;
 }
 
 type CreateSignedFetcher = (init: SignedFetcherInit) => typeof fetch;
@@ -22,7 +22,7 @@ type CreateSignedFetcher = (init: SignedFetcherInit) => typeof fetch;
  * @param init 
  * @returns fetch
  */
-export const createSignedFetcher: CreateSignedFetcher =  ({ service, region = 'us-east-1', credentials }): typeof fetch => {
+export const createSignedFetcher: CreateSignedFetcher = ({ service, region = 'us-east-1', credentials }): typeof fetch => {
 	return async (input, init?) => {
 		const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
 
@@ -41,14 +41,14 @@ export const createSignedFetcher: CreateSignedFetcher =  ({ service, region = 'u
 			query: parseQueryString(url.search),
 			headers: Object.fromEntries(headers.entries())
 		});
-	
+
 		const signer = new SignatureV4({
 			credentials: credentials || defaultProvider(),
 			service,
 			region,
 			sha256: Sha256,
 		});
-	
+
 		const signedRequest = await signer.sign(request);
 
 		return fetch(input, { headers: signedRequest.headers, body: signedRequest.body, method: signedRequest.method });
