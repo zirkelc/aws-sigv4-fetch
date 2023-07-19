@@ -23,6 +23,7 @@ describe('getFetchFn', () => {
     getFetchFn();
     expect(spy).toHaveBeenCalledWith(window);
 
+    // @ts-ignore
     global.window = undefined;
   });
 
@@ -34,8 +35,11 @@ describe('getFetchFn', () => {
   });
 
   it('throws an error if no fetch implementation is found', () => {
+    // @ts-ignore
     global.fetch = undefined;
+    // @ts-ignore
     global.window = undefined;
+    // @ts-ignore
     globalThis.fetch = undefined;
 
     expect(() => getFetchFn()).toThrow('No fetch implementation found');

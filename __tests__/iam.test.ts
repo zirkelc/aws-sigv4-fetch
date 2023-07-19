@@ -1,3 +1,4 @@
+import 'cross-fetch/polyfill';
 import { createSignedFetcher } from '../dist/index';
 
 describe('IAM', () => {
