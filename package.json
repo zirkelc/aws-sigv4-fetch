@@ -13,6 +13,7 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "lint": "npx rome check ./src",
+    "lint:ci": "npx rome ci ./src",
     "format": "npx rome format ./src --write"
   },
   "repository": {

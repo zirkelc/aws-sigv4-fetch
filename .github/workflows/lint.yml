@@ -1,4 +1,4 @@
-name: "Tests"
+name: "Lint"
 
 on:
   push:
@@ -6,19 +6,16 @@ on:
 
 jobs:
   tests:
-    name: Tests
+    name: Lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: [14, 16, 18]
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Node.js ${{ matrix.version }}
+      - name: Setup Node.js 16
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.version }}
+          node-version: 16
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
@@ -27,6 +24,6 @@ jobs:
         run: |
           npm ci
 
-      - name: Tests
+      - name: Lint
         run: |
-          npm run test
+          npm run lint:ci
