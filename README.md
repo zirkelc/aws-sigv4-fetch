@@ -4,10 +4,15 @@
 # aws-sigv4-fetch
 AWS SignatureV4 fetch API function to automatically sign HTTP request with given AWS credentials. Built entirely on the newest version of the official [AWS SDK for JS](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html).
 
-## Signature Version 4 
+## Signature Version 4
 > Signature Version 4 (SigV4) is the process to add authentication information to AWS API requests sent by HTTP. For security, most requests to AWS must be signed with an access key. The access key consists of an access key ID and secret access key, which are commonly referred to as your security credentials
 
 [AWS documentation on Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
+
+## ⚠️ Breaking Chang in v2
+In v2, the dependency to `cross-fetch` has been removed since native `fetch` is now supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, it must either be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application.
+
+See [Fetch](#fetch) for more information.
 
 ## Install
 ```sh
@@ -19,12 +24,12 @@ This package exports a function `createSignedFetcher` that returns a `fetch` fun
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
 
-const fetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
+const signedFetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
 const url = 'https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql';
 
 const body = { a: 1 };
 
-const response = await fetch(url, {
+const response = await signedFetch(url, {
   method: 'post',
   body: JSON.stringify(body),
   headers: {'Content-Type': 'application/json'}
@@ -39,9 +44,6 @@ If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-reque
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
 import { GraphQLClient } from 'graphql-request';
-
-const fetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
-const url = 'https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql';
 
 const query = `
   mutation CreateItem($input: CreateItemInput!) {
@@ -60,11 +62,46 @@ const variables = {
   },
 };
 
-const client = new GraphQLClient(url, {
-  fetch: createSignedFetcher({ service: 'appsync', region }),
+const client = new GraphQLClient('https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql', {
+  fetch: createSignedFetcher({ service: 'appsync', region: 'eu-west-1' }),
 });
 
 const result = await client.request(query, variables);
+```
+
+### Fetch
+By default, `createSignedFetcher` uses the `fetch` function from the environment. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. There are several ways to do this:
+
+#### Native `fetch`
+If you native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.
+
+```ts
+import { createSignedFetcher } from 'aws-sigv4-fetch';
+
+// native fetch is available and doesn't have to be passed as argument
+const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1' });
+```
+
+#### Polyfill `fetch`
+Install a fetch package like [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) and import it as [polyfill](https://en.wikipedia.org/wiki/Polyfill_(programming)). The `fetch` function will be available **globally** after importing the polyfill.
+
+```ts
+import 'cross-fetch/polyfill';
+import { createSignedFetcher } from 'aws-sigv4-fetch';
+
+// fetch was imported globally and doesn't have to be passed as argument
+const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1' });
+```
+
+#### Pass `fetch` as an argument
+Install a fetch package like [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) and import it as [ponyfill](https://github.com/sindresorhus/ponyfill). The `fetch` function will be available **locally** after importing the ponyfill. Pass the `fetch` function as an argument to `createSignedFetcher`:
+
+```ts
+import fetch from 'cross-fetch';
+import { createSignedFetcher } from 'aws-sigv4-fetch';
+
+// fetch was imported locally and must be passed as argument
+const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1', fetch });
 ```
 
 ## Resources
