@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest",
     "pretest": "npm run build",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "prepublishOnly": "npm run build",
     "lint": "npx rome check ./src",
     "lint:ci": "npx rome ci ./src",
