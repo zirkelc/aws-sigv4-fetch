@@ -9,8 +9,8 @@ AWS SignatureV4 fetch API function to automatically sign HTTP request with given
 
 [AWS documentation on Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
 
-## ⚠️ Breaking Changes in v2
-In version 2, the dependency to `cross-fetch` has been removed since native `fetch` is now supported in Node.js >= v18. If you are running in an environment where native fetch **is not** available, a poly-filled `fetch` function must be passed as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application.
+## ⚠️ Breaking Chang in v2
+In v2, the dependency to `cross-fetch` has been removed since native `fetch` is now supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, it must either be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application.
 
 See [Fetch](#fetch) for more information.
 
@@ -70,7 +70,7 @@ const result = await client.request(query, variables);
 ```
 
 ### Fetch
-By default, the `fetch` function from the environment is used. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be provided as polyfill or ponyfill. There are several ways to do this:
+By default, `createSignedFetcher` uses the `fetch` function from the environment. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. There are several ways to do this:
 
 #### Native `fetch`
 If you native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.
