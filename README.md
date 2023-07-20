@@ -73,7 +73,7 @@ const result = await client.request(query, variables);
 By default, `createSignedFetcher` uses the `fetch` function from the environment. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. There are several ways to do this:
 
 #### Native `fetch`
-If you native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.
+If native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
