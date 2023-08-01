@@ -12,9 +12,8 @@ import { getHeaders } from './get-headers';
 // TODO
 // export types
 // publish as cjs and esm
-// add github actions tets with ddb
-// add units tests
-// chnage jest to use ts-jest
+// add github actions tets with DDB
+// switch to vitest
 
 /**
  * Create a signed fetch function that automatically signs requests with AWS Signature V4.
@@ -32,6 +31,8 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
   const fetchFn = getFetchFn(opts.fetch);
 
   return async (input, init?) => {
+    console.log('input', { input, init });
+
     const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
 
     const headers = getHeaders(init?.headers);
@@ -44,7 +45,7 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
       protocol: url.protocol,
       method: init?.method.toUpperCase(), // method must be uppercase
       body: init?.body,
-      query: parseQueryString(url.search),
+      query: Object.fromEntries(url.searchParams.entries()),
       headers: Object.fromEntries(headers.entries()),
     });
 
