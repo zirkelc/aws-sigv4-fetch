@@ -31,8 +31,6 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
   const fetchFn = getFetchFn(opts.fetch);
 
   return async (input, init?) => {
-    console.log('input', { input, init });
-
     const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
 
     const headers = getHeaders(init?.headers);

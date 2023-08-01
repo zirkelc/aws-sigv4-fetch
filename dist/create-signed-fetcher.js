@@ -13,7 +13,6 @@ const createSignedFetcher = (opts) => {
     const credentials = opts.credentials || (0, credential_provider_node_1.defaultProvider)();
     const fetchFn = (0, get_fetch_1.getFetchFn)(opts.fetch);
     return async (input, init) => {
-        console.log('input', { input, init });
         const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
         const headers = (0, get_headers_1.getHeaders)(init?.headers);
         headers.set('host', url.host);
