@@ -9,6 +9,7 @@ env:
   # AWS_REGION: ${{ secrets.AWS_REGION }}
 
 jobs:
+  lint:
     name: Lint
     runs-on: ubuntu-latest
 
