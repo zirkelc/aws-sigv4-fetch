@@ -1,4 +1,6 @@
-![npm](https://img.shields.io/npm/v/aws-sigv4-fetch?label=aws-sigv4-fetch)
+
+[![CI](https://github.com/zirkelc/aws-sigv4-fetch/actions/workflows/ci.yml/badge.svg)](https://github.com/zirkelc/aws-sigv4-fetch/actions/workflows/ci.yml)
+![npm](https://img.shields.io/npm/v/aws-sigv4-fetch)
 ![npm](https://img.shields.io/npm/dt/aws-sigv4-fetch)
 
 # aws-sigv4-fetch
