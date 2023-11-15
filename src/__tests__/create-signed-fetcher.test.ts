@@ -1,8 +1,9 @@
+import { describe, it, expect, vi } from 'vitest';
 import { createSignedFetcher } from '../create-signed-fetcher';
 
 describe('createSignedFetcher', () => {
   it('should create a signed fetcher', async () => {
-    const fetchMock = jest.fn();
+    const fetchMock = vi.fn();
 
     const fetcher = createSignedFetcher({
       service: 'dummyService',

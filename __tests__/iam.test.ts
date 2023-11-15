@@ -1,9 +1,10 @@
+import { describe, it, expect } from 'vitest';
 import 'cross-fetch/polyfill';
 import { createSignedFetcher } from '../dist/index';
 
 describe('IAM', () => {
 	describe('GET', () => {
-		test('should get current user', async () => {
+		it('should get current user', async () => {
 			const url = 'https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08';
 
 			const fetch = createSignedFetcher({ service: 'iam', region: 'us-east-1' });
@@ -19,7 +20,7 @@ describe('IAM', () => {
 	})
 
 	describe('POST', () => {
-		test('should get current user', async () => {
+		it('should get current user', async () => {
 			const url = 'https://iam.amazonaws.com/';
 			const body = 'Action=GetUser&Version=2010-05-08'
 
