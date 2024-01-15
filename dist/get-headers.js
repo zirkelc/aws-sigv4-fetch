@@ -9,15 +9,15 @@ const getHeaders = (init) => {
         init.forEach((header) => headers.set(header[0], header[1]));
         return headers;
     }
-    if ('forEach' in init && typeof init.forEach === 'function') {
+    if ("forEach" in init && typeof init.forEach === "function") {
         init.forEach((value, key) => headers.set(key, value));
         return headers;
     }
-    if (typeof init === 'object') {
+    if (typeof init === "object") {
         Object.entries(init).forEach(([key, value]) => headers.set(key, value));
         return headers;
     }
-    throw new Error('Invalid headers');
+    throw new Error("Invalid headers");
 };
 exports.getHeaders = getHeaders;
 //# sourceMappingURL=get-headers.js.map
