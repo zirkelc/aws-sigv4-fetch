@@ -33,6 +33,7 @@ const createSignedFetcher = (opts) => {
         });
         const signedRequest = await signer.sign(request);
         return fetchFn(input, {
+            ...init,
             headers: signedRequest.headers,
             body: signedRequest.body,
             method: signedRequest.method,

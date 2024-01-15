@@ -4,9 +4,9 @@
   "configurations": [
     {
       "type": "node-terminal",
-      "name": "Debug Test File (npm run test)",
+      "name": "Run Test (pnpm test)",
       "request": "launch",
-      "command": "npm run test -- ${relativeFile}",
+      "command": "pnpm test -- ${relativeFile}",
       "cwd": "${fileDirname}"
     },
   ]
