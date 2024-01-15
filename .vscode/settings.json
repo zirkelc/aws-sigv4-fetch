@@ -1,12 +1,13 @@
 {
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
-    "quickfix.rome": true
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": true
   },
   "[javascript]": {
-    "editor.defaultFormatter": "rome.rome",
+    "editor.defaultFormatter": "biomejs.biome",
   },
   "[typescript]": {
-    "editor.defaultFormatter": "rome.rome",
+    "editor.defaultFormatter": "biomejs.biome",
   }
 }
