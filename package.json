@@ -2,6 +2,7 @@
   "name": "aws-sigv4-fetch",
   "version": "2.1.2-next.0",
   "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
+  "packageManager": "pnpm@8.8.0",
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
