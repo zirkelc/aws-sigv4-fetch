@@ -1,9 +1,0 @@
-# TODO relase.yml workflow
-# https://github.com/ArtiomTr/jest-coverage-report-action/blob/main/.github/workflows/draft-release.yml
-# https://docs.github.com/en/actions/publishing-packages/about-packaging-with-github-actions
-
-# https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
-
-
-#https://github.com/semantic-release/semantic-release
-#https://github.com/conventional-changelog/commitlint
