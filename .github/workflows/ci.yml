@@ -27,7 +27,7 @@ jobs:
       - name: Install
         id: install
         run: |
-          pnpm ci
+          pnpm i
 
       - name: Lint
         run: |
@@ -56,7 +56,7 @@ jobs:
       - name: Install
         id: install
         run: |
-          pnpm ci
+          pnpm i
 
       - name: Tests
         run: |
