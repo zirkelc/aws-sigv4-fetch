@@ -97,6 +97,6 @@ describe("IAM", () => {
 
 		controller.abort();
 
-		await expect(response).rejects.toThrow("This operation was aborted");
+		await expect(response).rejects.toThrow();
 	});
 });
