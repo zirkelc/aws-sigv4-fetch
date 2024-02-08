@@ -1,8 +1,33 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  createSignedFetcher: () => createSignedFetcher
+});
+module.exports = __toCommonJS(src_exports);
+
 // src/create-signed-fetcher.ts
-import { Sha256 } from "@aws-crypto/sha256-js";
-import { defaultProvider } from "@aws-sdk/credential-provider-node";
-import { HttpRequest } from "@aws-sdk/protocol-http";
-import { SignatureV4 } from "@aws-sdk/signature-v4";
+var import_sha256_js = require("@aws-crypto/sha256-js");
+var import_credential_provider_node = require("@aws-sdk/credential-provider-node");
+var import_protocol_http = require("@aws-sdk/protocol-http");
+var import_signature_v4 = require("@aws-sdk/signature-v4");
 
 // src/get-fetch.ts
 var getFetchFn = (customFetchFn) => {
@@ -42,7 +67,7 @@ var getHeaders = (init) => {
 var createSignedFetcher = (opts) => {
   const service = opts.service;
   const region = opts.region || "us-east-1";
-  const credentials = opts.credentials || defaultProvider();
+  const credentials = opts.credentials || (0, import_credential_provider_node.defaultProvider)();
   const fetchFn = getFetchFn(opts.fetch);
   return async (input, init) => {
     const url = new URL(
@@ -50,7 +75,7 @@ var createSignedFetcher = (opts) => {
     );
     const headers = getHeaders(init?.headers);
     headers.set("host", url.host);
-    const request = new HttpRequest({
+    const request = new import_protocol_http.HttpRequest({
       hostname: url.hostname,
       path: url.pathname,
       protocol: url.protocol,
@@ -64,11 +89,11 @@ var createSignedFetcher = (opts) => {
       fragment: url.hash,
       headers: Object.fromEntries(headers.entries())
     });
-    const signer = new SignatureV4({
+    const signer = new import_signature_v4.SignatureV4({
       credentials,
       service,
       region,
-      sha256: Sha256
+      sha256: import_sha256_js.Sha256
     });
     const signedRequest = await signer.sign(request);
     return fetchFn(input, {
@@ -79,6 +104,7 @@ var createSignedFetcher = (opts) => {
     });
   };
 };
-export {
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
   createSignedFetcher
-};
+});

@@ -1,13 +1,20 @@
 import { Sha256 } from "@aws-crypto/sha256-js";
 import { defaultProvider } from "@aws-sdk/credential-provider-node";
 import { HttpRequest } from "@aws-sdk/protocol-http";
-// import fetch, { Headers } from 'cross-fetch';
-// import { Credentials, Provider, QueryParameterBag } from "@aws-sdk/types";
-import { parseQueryString } from "@aws-sdk/querystring-parser";
 import { SignatureV4 } from "@aws-sdk/signature-v4";
-import { getFetchFn } from "./get-fetch";
-import { getHeaders } from "./get-headers";
-import { CreateSignedFetcher, SignedFetcherOptions } from "./types";
+import type { AwsCredentialIdentity, Provider } from "@aws-sdk/types";
+import { getFetchFn } from "./get-fetch.js";
+import { getHeaders } from "./get-headers.js";
+
+export type SignedFetcherOptions = {
+	service: string;
+	region?: string;
+	credentials?: AwsCredentialIdentity | Provider<AwsCredentialIdentity>;
+	fetch?: typeof fetch;
+};
+
+export type CreateSignedFetcher = (init: SignedFetcherOptions) => typeof fetch;
+
 
 // TODO
 // export types
