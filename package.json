@@ -19,10 +19,14 @@
       }
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "vitest",
     "pretest": "pnpm build && pnpm start",
-    "build": "rm -rf dist && tsup src/index.ts --dts --format cjs,esm",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
     "lint": "pnpm biome lint ./src",
     "format": "pnpm biome format ./src --write"
