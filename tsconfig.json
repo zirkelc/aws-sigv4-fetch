@@ -13,10 +13,7 @@
   },
   "include": [
     "src/**/*.ts",
-  ],
-  "exclude": [
     "vitest.config.ts",
-    "**/__tests__/**/*",
-    "node_modules/**/*",
-  ]
+    "vitest.workspace.mts",
+  ],
 }

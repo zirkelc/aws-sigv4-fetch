@@ -1,6 +1,6 @@
 import "cross-fetch/polyfill";
 import { describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../dist/index";
+import { createSignedFetcher } from "../../dist/index.js";
 
 describe("IAM", () => {
 	it("should handle GET", async () => {
@@ -98,5 +98,16 @@ describe("IAM", () => {
 		controller.abort();
 
 		await expect(response).rejects.toThrow();
+	});
+
+	it("should throw an error for unsigned fetch", async () => {
+		const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
+
+		const response = await fetch(url, {
+			method: "GET",
+		});
+
+		expect(response.status).toBe(403);
+		expect(response.statusText).toBe("Forbidden");
 	});
 });

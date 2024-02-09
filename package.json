@@ -29,7 +29,7 @@
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
     "lint": "pnpm biome lint ./src",
-    "format": "pnpm biome format ./src --write"
+    "format": "pnpm biome format --write ./src ./test"
   },
   "repository": {
     "type": "git",

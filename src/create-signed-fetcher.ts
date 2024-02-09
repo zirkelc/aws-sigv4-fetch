@@ -15,7 +15,6 @@ export type SignedFetcherOptions = {
 
 export type CreateSignedFetcher = (init: SignedFetcherOptions) => typeof fetch;
 
-
 // TODO
 // export types
 // publish as cjs and esm
