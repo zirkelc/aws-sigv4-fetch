@@ -11,10 +11,16 @@ AWS SignatureV4 fetch API function to automatically sign HTTP request with given
 
 [AWS documentation on Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
 
-## ⚠️ Breaking Chang in v2
-In v2, the dependency to `cross-fetch` has been removed since native `fetch` is now supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, it must either be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application.
+## ⚠️ ESM Support
+Since v3, this package ships with ESM and CommonJS support. That means you can `import` or `require` the package in your project.
 
-See [Fetch](#fetch) for more information.
+```ts
+// ESM
+import { createSignedFetcher } from 'aws-sigv4-fetch';
+
+// CommonJS
+const { createSignedFetcher } = require('aws-sigv4-fetch');
+```
 
 ## Install
 ```sh
@@ -72,7 +78,7 @@ const result = await client.request(query, variables);
 ```
 
 ### Fetch
-By default, `createSignedFetcher` uses the `fetch` function from the environment. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. There are several ways to do this:
+By default, `createSignedFetcher` uses the `fetch` function from the environment. Native `fetch` is supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application. There are several ways to do this:
 
 #### Native `fetch`
 If native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.

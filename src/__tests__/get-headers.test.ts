@@ -1,6 +1,6 @@
 import "cross-fetch/polyfill";
 import { describe, expect, it } from "vitest";
-import { getHeaders } from "../get-headers";
+import { getHeaders } from "../get-headers.js";
 
 describe("getHeaders", () => {
 	it("should return an empty Map if no arguments are provided", () => {
