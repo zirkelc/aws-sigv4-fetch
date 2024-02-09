@@ -1,3 +1,4 @@
+import "cross-fetch/polyfill";
 import { expect, test } from "vitest";
 import { createSignedFetcher } from "../../dist/index.cjs";
 

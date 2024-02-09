@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createSignedFetcher } from "../create-signed-fetcher";
+import { createSignedFetcher } from "../create-signed-fetcher.js";
 
 describe("createSignedFetcher", () => {
 	it("should create a signed fetcher", async () => {
