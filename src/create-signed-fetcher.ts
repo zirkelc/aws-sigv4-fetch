@@ -15,12 +15,6 @@ export type SignedFetcherOptions = {
 
 export type CreateSignedFetcher = (init: SignedFetcherOptions) => typeof fetch;
 
-// TODO
-// export types
-// publish as cjs and esm
-// add github actions tets with DDB
-// switch to vitest
-
 /**
  * Create a signed fetch function that automatically signs requests with AWS Signature V4.
  * Service and region must be provided. Credentials can be provided if you want to sign requests with a specific set of credentials.

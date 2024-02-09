@@ -25,6 +25,10 @@ const { createSignedFetcher } = require('aws-sigv4-fetch');
 ## Install
 ```sh
 npm install --save aws-sigv4-fetch
+
+yard add aws-sigv4-fetch
+
+pnpm add aws-sigv4-fetch
 ```
 
 ## Usage
@@ -111,6 +115,11 @@ import { createSignedFetcher } from 'aws-sigv4-fetch';
 // fetch was imported locally and must be passed as argument
 const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1', fetch });
 ```
+
+## To Do
+- [ ] add integration tests for other AWS services like S3, DynamoDB, etc.
+- [ ] migrate to `@smithy/*` packages (https://github.com/zirkelc/aws-sigv4-fetch/issues/8)
+- [ ] guess AWS service and region from URL
 
 ## Resources
 - [Sign GraphQL Request with AWS IAM and Signature V4](https://dev.to/zirkelc/sign-graphql-request-with-aws-iam-and-signature-v4-2il6)
