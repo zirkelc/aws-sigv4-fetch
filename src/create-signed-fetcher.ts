@@ -52,7 +52,7 @@ export const createSignedFetcher: CreateSignedFetcher = (
 			port: url.port ? Number(url.port) : undefined,
 			username: url.username,
 			password: url.password,
-			method: init?.method.toUpperCase(), // method must be uppercase
+			method: init?.method?.toUpperCase() ?? 'GET', // method must be uppercase
 			body: init?.body,
 			query: Object.fromEntries(url.searchParams.entries()),
 			fragment: url.hash,
