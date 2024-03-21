@@ -36,6 +36,21 @@ describe("IAM", () => {
 		expect(data).toContain("<GetUserResult>");
 	});
 
+	it("should fallback method to GET", async () => {
+		const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
+
+		const fetch = createSignedFetcher({
+			service: "iam",
+			region: "us-east-1",
+		});
+		const response = await fetch(url);
+
+		expect(response.status).toBe(200);
+
+		const data = await response.text();
+		expect(data).toContain("<GetUserResult>");
+	});
+
 	it("should handle additional headers", async () => {
 		const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
 

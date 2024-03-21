@@ -10,9 +10,6 @@ const urls = [
 
 const methods = ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"];
 
-const formData = new FormData();
-formData.append("foo", "bar");
-
 const bodies = [
 	undefined,
 	"foo",

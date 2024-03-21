@@ -28,8 +28,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
-    "lint": "pnpm biome lint ./src",
-    "format": "pnpm biome format --write ./src ./test"
+    "lint": "biome check ./src --apply --no-errors-on-unmatched"
   },
   "repository": {
     "type": "git",
