@@ -1,6 +1,10 @@
 import "cross-fetch/polyfill";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createSignedFetcher } from "../../dist/index.js";
+
+beforeAll(() => {
+
+});
 
 describe("IAM", () => {
 	it("should handle GET", async () => {

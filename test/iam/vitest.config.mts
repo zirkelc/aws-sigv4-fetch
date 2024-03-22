@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	test: {
-		name: "iam",
+		name: "e2e/iam",
 		typecheck: {
 			enabled: true,
 		},
