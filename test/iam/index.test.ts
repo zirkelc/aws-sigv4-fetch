@@ -8,7 +8,7 @@ describe("IAM", () => {
 
 		const fetch = createSignedFetcher({ service: "iam", region: "us-east-1" });
 		const response = await fetch(url, {
-			method: "GET",
+			method: "get",
 		});
 
 		expect(response.status).toBe(200);
@@ -23,7 +23,7 @@ describe("IAM", () => {
 
 		const fetch = createSignedFetcher({ service: "iam", region: "us-east-1" });
 		const response = await fetch(url, {
-			method: "POST",
+			method: "post",
 			body,
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded; charset=utf-8",

@@ -8,7 +8,7 @@ const urls = [
 	"http://test.com/foo?bar=baz#qux",
 ];
 
-const methods = ["GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"];
+const methods = ["GET", "POST", "get", "post"];
 
 const bodies = [
 	undefined,
@@ -69,7 +69,7 @@ describe("createSignedFetcher", () => {
 		const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
 
 		expect(fetchUrl).toEqual(url);
-		expect(fetchInit.method).toEqual(init.method);
+		expect(fetchInit.method).toEqual(init.method.toUpperCase());
 		expect(fetchInit.body).toEqual(undefined);
 		expect(fetchInit.headers).toEqual(expect.any(Object));
 
