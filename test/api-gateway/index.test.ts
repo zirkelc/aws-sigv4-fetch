@@ -135,8 +135,9 @@ beforeAll(async () => {
 	};
 
 	try {
-		const api = await findApi(API_NAME);
-		if (api?.id) await deleteApi(api.id);
+    // doesn't work on CI if tests are run in parallel
+		// const api = await findApi(API_NAME);
+		// if (api?.id) await deleteApi(api.id);
 		url = await createApi(API_NAME, API_RESPONSE);
 
 		console.log(`API created and deployed at: ${url}`);
