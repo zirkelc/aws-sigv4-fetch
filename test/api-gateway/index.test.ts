@@ -142,6 +142,7 @@ beforeAll(async () => {
 		console.log(`API created and deployed at: ${url}`);
 	} catch (error) {
 		console.error("Error setting up the REST API: ", error);
+    throw error;
 	}
 
 	return async () => {
@@ -150,6 +151,10 @@ beforeAll(async () => {
 });
 
 describe("APIGateway", () => {
+  beforeAll(async () => {
+			if (!url) throw new Error("API URL not set");
+		});
+
 	it("should handle GET", async () => {
 		const fetch = createSignedFetcher({
 			service: "execute-api",
