@@ -16,6 +16,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { createSignedFetcher } from "../../dist/index.js";
 
 const REGION = "us-east-1";
+const STAGE = "test";
+const PATH = "mock";
 const API_NAME = "aws-sigv4-fetch";
 const API_RESPONSE = { test: "mock" };
 
@@ -39,6 +41,11 @@ beforeAll(async () => {
 		return api;
 	};
 
+  const formatApiUrl = (restApiId?: string) => {
+    		if (!restApiId) throw new Error("API ID missing");
+						return `https://${restApiId}.execute-api.${REGION}.amazonaws.com/${STAGE}/${PATH}`;
+  }
+
 	const createApi = async (
 		apiName: string,
 		response: Record<string, string>,
@@ -51,7 +58,7 @@ beforeAll(async () => {
 		);
 
 		restApiId = api.id;
-		console.log("REST API Created: ", restApiId);
+		if(!restApiId) throw new Error("API not created");
 
 		const resourcesResponse = await client.send(
 			new GetResourcesCommand({
@@ -129,16 +136,15 @@ beforeAll(async () => {
 		const deploymentId = deploymentResponse.id;
 		if (!deploymentId) throw new Error("Deployment not found");
 
-		const apiUrl = `https://${restApiId}.execute-api.${REGION}.amazonaws.com/test/mock`;
-
-		return apiUrl;
+		return api;
 	};
 
 	try {
     // doesn't work on CI if tests are run in parallel
-		// const api = await findApi(API_NAME);
-		// if (api?.id) await deleteApi(api.id);
-		url = await createApi(API_NAME, API_RESPONSE);
+		let api = await findApi(API_NAME);
+		if (!api?.id) api = await createApi(API_NAME, API_RESPONSE);
+
+		url = formatApiUrl(api.id);
 
 		console.log(`API created and deployed at: ${url}`);
 	} catch (error) {
@@ -147,7 +153,7 @@ beforeAll(async () => {
 	}
 
 	return async () => {
-		await deleteApi(restApiId);
+		// await deleteApi(restApiId);
 	};
 });
 
