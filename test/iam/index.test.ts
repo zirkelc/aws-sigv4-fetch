@@ -2,7 +2,7 @@ import "cross-fetch/polyfill";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createSignedFetcher } from "../../dist/index.js";
 
-const SERVICE = "execute-api";
+const SERVICE = "iam";
 const REGION = "us-east-1";
 
 beforeAll(() => {});
