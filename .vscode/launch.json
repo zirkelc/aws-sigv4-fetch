@@ -6,8 +6,8 @@
       "type": "node-terminal",
       "name": "Run Test (pnpm test)",
       "request": "launch",
-      "command": "pnpm test -- ${relativeFile}",
-      "cwd": "${fileDirname}"
+      "command": "pnpm vitest ${relativeFile}",
+      "cwd": "${workspaceRoot}"
     },
   ]
 }
