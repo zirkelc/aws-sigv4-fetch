@@ -1,6 +1,6 @@
 {
   "name": "aws-sigv4-fetch",
-  "version": "3.0.0",
+  "version": "3.0.1-alpha.0",
   "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
   "packageManager": "pnpm@8.8.0",
   "type": "module",
