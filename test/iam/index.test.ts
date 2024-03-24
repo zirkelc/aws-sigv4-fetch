@@ -2,15 +2,16 @@ import "cross-fetch/polyfill";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createSignedFetcher } from "../../dist/index.js";
 
-beforeAll(() => {
+const SERVICE = "execute-api";
+const REGION = "us-east-1";
 
-});
+beforeAll(() => {});
 
 describe("IAM", () => {
 	it("should handle GET", async () => {
 		const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
 
-		const fetch = createSignedFetcher({ service: "iam", region: "us-east-1" });
+		const fetch = createSignedFetcher({ service: SERVICE, region: REGION });
 		const response = await fetch(url, {
 			method: "get",
 		});
@@ -25,7 +26,7 @@ describe("IAM", () => {
 		const url = "https://iam.amazonaws.com/";
 		const body = "Action=GetUser&Version=2010-05-08";
 
-		const fetch = createSignedFetcher({ service: "iam", region: "us-east-1" });
+		const fetch = createSignedFetcher({ service: SERVICE, region: REGION });
 		const response = await fetch(url, {
 			method: "post",
 			body,
@@ -44,8 +45,8 @@ describe("IAM", () => {
 		const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
 
 		const fetch = createSignedFetcher({
-			service: "iam",
-			region: "us-east-1",
+			service: SERVICE,
+			region: REGION,
 		});
 		const response = await fetch(url);
 
@@ -64,8 +65,8 @@ describe("IAM", () => {
 		};
 
 		const fetch = createSignedFetcher({
-			service: "iam",
-			region: "us-east-1",
+			service: SERVICE,
+			region: REGION,
 		});
 
 		const response = await fetch(url, {
@@ -84,8 +85,8 @@ describe("IAM", () => {
 			"https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08#test-fragment";
 
 		const fetch = createSignedFetcher({
-			service: "iam",
-			region: "us-east-1",
+			service: SERVICE,
+			region: REGION,
 		});
 
 		const response = await fetch(url, {
@@ -105,8 +106,8 @@ describe("IAM", () => {
 		const signal = controller.signal;
 
 		const fetch = createSignedFetcher({
-			service: "iam",
-			region: "us-east-1",
+			service: SERVICE,
+			region: REGION,
 		});
 
 		const response = fetch(url, {
