@@ -41,10 +41,10 @@ beforeAll(async () => {
 		return api;
 	};
 
-  const formatApiUrl = (restApiId?: string) => {
-    		if (!restApiId) throw new Error("API ID missing");
-						return `https://${restApiId}.execute-api.${REGION}.amazonaws.com/${STAGE}/${PATH}`;
-  }
+	const formatApiUrl = (restApiId?: string) => {
+		if (!restApiId) throw new Error("API ID missing");
+		return `https://${restApiId}.execute-api.${REGION}.amazonaws.com/${STAGE}/${PATH}`;
+	};
 
 	const createApi = async (
 		apiName: string,
@@ -58,7 +58,7 @@ beforeAll(async () => {
 		);
 
 		restApiId = api.id;
-		if(!restApiId) throw new Error("API not created");
+		if (!restApiId) throw new Error("API not created");
 
 		const resourcesResponse = await client.send(
 			new GetResourcesCommand({
@@ -140,7 +140,7 @@ beforeAll(async () => {
 	};
 
 	try {
-    // doesn't work on CI if tests are run in parallel
+		// doesn't work on CI if tests are run in parallel
 		let api = await findApi(API_NAME);
 		if (!api?.id) api = await createApi(API_NAME, API_RESPONSE);
 
@@ -149,7 +149,7 @@ beforeAll(async () => {
 		console.log(`API created and deployed at: ${url}`);
 	} catch (error) {
 		console.error("Error setting up the REST API: ", error);
-    throw error;
+		throw error;
 	}
 
 	return async () => {
@@ -158,9 +158,9 @@ beforeAll(async () => {
 });
 
 describe("APIGateway", () => {
-  beforeAll(async () => {
-			if (!url) throw new Error("API URL not set");
-		});
+	beforeAll(async () => {
+		if (!url) throw new Error("API URL not set");
+	});
 
 	it("should handle GET", async () => {
 		const fetch = createSignedFetcher({
