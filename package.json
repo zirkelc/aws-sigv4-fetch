@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "test": "vitest",
-    "pretest": "pnpm build && pnpm start",
+    "pretest": "pnpm build",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
@@ -45,10 +45,9 @@
     "@aws-crypto/sha256-js": "^4.0.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.359.0",
     "@aws-sdk/credential-provider-node": "^3.358.0",
-    "@aws-sdk/protocol-http": "^3.357.0",
-    "@aws-sdk/querystring-parser": "^3.357.0",
-    "@aws-sdk/signature-v4": "^3.357.0",
-    "@aws-sdk/types": "^3.357.0"
+    "@aws-sdk/types": "^3.357.0",
+    "@smithy/protocol-http": "^3.3.0",
+    "@smithy/signature-v4": "^2.2.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.1",
