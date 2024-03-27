@@ -58,6 +58,10 @@ jobs:
         run: |
           pnpm i
 
+      - name: Build
+        run: |
+          pnpm build
+
       - name: Tests
         run: |
           pnpm test
