@@ -227,6 +227,7 @@ describe("APIGateway", () => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
+			encodeRfc3986: true,
 		});
 
 		console.log(`${apiRootUrl}${path}`);
@@ -242,6 +243,7 @@ describe("APIGateway", () => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
+			encodeRfc3986: true,
 		});
 
 		const response = await fetch(`${apiRootUrl}${path}`, {
