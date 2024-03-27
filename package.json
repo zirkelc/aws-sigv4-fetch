@@ -23,7 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "pnpm build && vitest",
+    "test": "vitest",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",

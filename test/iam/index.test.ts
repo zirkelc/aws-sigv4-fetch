@@ -1,6 +1,6 @@
 import "cross-fetch/polyfill";
 import { beforeAll, describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
+import { createSignedFetcher } from "../../src/index.js";
 
 const SERVICE = "iam";
 const REGION = "us-east-1";

@@ -13,16 +13,15 @@ import {
 } from "@aws-sdk/client-api-gateway";
 import "cross-fetch/polyfill";
 import { beforeAll, describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
+import { createSignedFetcher } from "../../src/index.js";
 
 const SERVICE = "execute-api";
 const REGION = "us-east-1";
 const STAGE = "test";
-const PATH = "mock";
 const API_NAME = "aws-sigv4-fetch";
-const API_RESPONSE = { test: "mock" };
+const API_RESPONSE = { foo: "bar" };
 
-let url = "";
+let apiRootUrl = "";
 
 beforeAll(async () => {
 	const client = new APIGatewayClient({ region: REGION });
@@ -75,15 +74,17 @@ beforeAll(async () => {
 				pathPart: "mock",
 			}),
 		);
-		const resourceId = resourceCreationResponse.id;
-		if (!resourceId) throw new Error("Resource not found");
+		const mockResourceId = resourceCreationResponse.id;
+		if (!mockResourceId) throw new Error("Resource not found");
 
 		const httpMethods = ["GET", "POST"];
+
+		// resource /mock
 		for (const httpMethod of httpMethods) {
 			await client.send(
 				new PutMethodCommand({
 					restApiId,
-					resourceId,
+					resourceId: mockResourceId,
 					httpMethod,
 					authorizationType: "AWS_IAM",
 				}),
@@ -92,7 +93,7 @@ beforeAll(async () => {
 			await client.send(
 				new PutIntegrationCommand({
 					restApiId,
-					resourceId,
+					resourceId: mockResourceId,
 					httpMethod,
 					type: "MOCK",
 					requestTemplates: {
@@ -104,7 +105,7 @@ beforeAll(async () => {
 			await client.send(
 				new PutIntegrationResponseCommand({
 					restApiId,
-					resourceId,
+					resourceId: mockResourceId,
 					httpMethod,
 					statusCode: "200",
 					responseTemplates: {
@@ -116,7 +117,65 @@ beforeAll(async () => {
 			await client.send(
 				new PutMethodResponseCommand({
 					restApiId,
-					resourceId,
+					resourceId: mockResourceId,
+					httpMethod,
+					statusCode: "200",
+					responseModels: {
+						"application/json": "Empty",
+					},
+				}),
+			);
+		}
+
+		const proxyResourceCreationResponse = await client.send(
+			new CreateResourceCommand({
+				restApiId: restApiId,
+				parentId: mockResourceId,
+				pathPart: "{proxy+}",
+			}),
+		);
+		const proxyResourceId = proxyResourceCreationResponse.id;
+		if (!proxyResourceId) throw new Error("Proxy resource not found");
+
+		// resource /mock/{proxy+}
+		for (const httpMethod of httpMethods) {
+			await client.send(
+				new PutMethodCommand({
+					restApiId,
+					resourceId: proxyResourceId,
+					httpMethod,
+					authorizationType: "AWS_IAM",
+				}),
+			);
+
+			await client.send(
+				new PutIntegrationCommand({
+					restApiId,
+					resourceId: proxyResourceId,
+					httpMethod,
+					type: "MOCK",
+					requestTemplates: {
+						"application/json": '{"statusCode": 200}',
+					},
+				}),
+			);
+
+			await client.send(
+				new PutIntegrationResponseCommand({
+					restApiId,
+					resourceId: proxyResourceId,
+					httpMethod,
+					statusCode: "200",
+					responseTemplates: {
+						"application/json": JSON.stringify(response),
+					},
+				}),
+			);
+
+			await client.send(
+				new PutMethodResponseCommand({
+					restApiId,
+					resourceId: proxyResourceId,
 					httpMethod,
 					statusCode: "200",
 					responseModels: {
@@ -146,7 +205,7 @@ beforeAll(async () => {
 		restApiId = api.id;
 		if (!restApiId) throw new Error("API not created");
 
-		url = `https://${restApiId}.execute-api.${REGION}.amazonaws.com/${STAGE}/${PATH}`;
+		apiRootUrl = `https://${restApiId}.execute-api.${REGION}.amazonaws.com/${STAGE}`;
 	} catch (error) {
 		console.error("Error setting up the REST API: ", error);
 		throw error;
@@ -157,18 +216,21 @@ beforeAll(async () => {
 	};
 });
 
+const paths = ["/mock", "/mock/foo", "/mock/foo-*"];
+
 describe("APIGateway", () => {
 	beforeAll(async () => {
-		if (!url) throw new Error("API URL not set");
+		if (!apiRootUrl) throw new Error("API URL not set");
 	});
 
-	it("should handle GET", async () => {
+	it.each(paths)("should GET %s", async (path) => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
 		});
 
-		const response = await fetch(url, { method: "GET" });
+		console.log(`${apiRootUrl}${path}`);
+		const response = await fetch(`${apiRootUrl}${path}`, { method: "GET" });
 
 		expect(response.status).toBe(200);
 
@@ -176,13 +238,13 @@ describe("APIGateway", () => {
 		expect(data).toEqual(API_RESPONSE);
 	});
 
-	it("should handle POST", async () => {
+	it.each(paths)("should POST %s", async (path) => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
 		});
 
-		const response = await fetch(url, {
+		const response = await fetch(`${apiRootUrl}${path}`, {
 			method: "POST",
 			body: JSON.stringify({}),
 			headers: {
@@ -197,7 +259,7 @@ describe("APIGateway", () => {
 	});
 
 	it("should throw an error for unsigned fetch", async () => {
-		const response = await fetch(url);
+		const response = await fetch(`${apiRootUrl}/mock`);
 
 		expect(response.status).toBe(403);
 		expect(response.statusText).toBe("Forbidden");
