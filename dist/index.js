@@ -48,19 +48,21 @@ var getHeaders = (init) => {
 
 // src/create-signed-fetcher.ts
 var createSignedFetcher = (opts) => {
-  const service = opts.service;
-  const region = opts.region || "us-east-1";
-  const credentials = opts.credentials || defaultProvider();
   const fetchFn = getFetchFn(opts.fetch);
   return async (input, init) => {
+    const service = opts.service;
+    const region = opts.region || "us-east-1";
+    const credentials = opts.credentials || defaultProvider();
     const url = new URL(
       typeof input === "string" ? input : input instanceof URL ? input.href : input.url
     );
-    url.pathname = encodeRfc3986(url.pathname);
-    url.searchParams.forEach((value, key) => {
-      url.searchParams.delete(key);
-      url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
-    });
+    if (opts.encodeRfc3986) {
+      url.pathname = encodeRfc3986(url.pathname);
+      url.searchParams.forEach((value, key) => {
+        url.searchParams.delete(key);
+        url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
+      });
+    }
     const headers = getHeaders(init?.headers);
     headers.set("host", url.host);
     const request = new HttpRequest({
@@ -77,7 +79,6 @@ var createSignedFetcher = (opts) => {
       fragment: url.hash,
       headers: Object.fromEntries(headers.entries())
     });
-    console.log(request);
     const signer = new SignatureV4({
       credentials,
       service,
