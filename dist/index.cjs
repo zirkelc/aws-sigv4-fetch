@@ -8,7 +8,7 @@ var __export = (target, all) => {
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
+    for (const key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
         __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
@@ -26,8 +26,8 @@ module.exports = __toCommonJS(src_exports);
 // src/create-signed-fetcher.ts
 var import_sha256_js = require("@aws-crypto/sha256-js");
 var import_credential_provider_node = require("@aws-sdk/credential-provider-node");
-var import_protocol_http = require("@aws-sdk/protocol-http");
-var import_signature_v4 = require("@aws-sdk/signature-v4");
+var import_protocol_http = require("@smithy/protocol-http");
+var import_signature_v4 = require("@smithy/signature-v4");
 
 // src/encode-rfc3986.ts
 var encodeRfc3986 = (str) => {
