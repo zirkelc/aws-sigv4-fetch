@@ -5,6 +5,7 @@ type SignedFetcherOptions = {
     region?: string;
     credentials?: AwsCredentialIdentity | Provider<AwsCredentialIdentity>;
     fetch?: typeof fetch;
+    encodeRfc3986?: boolean;
 };
 type CreateSignedFetcher = (init: SignedFetcherOptions) => typeof fetch;
 declare const createSignedFetcher: CreateSignedFetcher;

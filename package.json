@@ -24,11 +24,11 @@
   ],
   "scripts": {
     "test": "vitest",
-    "pretest": "pnpm build",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
-    "lint": "pnpm biome check --apply --no-errors-on-unmatched src test"
+    "lint": "pnpm biome check --apply --no-errors-on-unmatched src test",
+    "release": "np"
   },
   "repository": {
     "type": "git",
@@ -54,6 +54,7 @@
     "@tsconfig/node18": "^18.2.2",
     "cross-fetch": "^4.0.0",
     "dual-publish": "^4.0.0",
+    "np": "^10.0.2",
     "tsup": "^8.0.1",
     "typescript": "^5.2.0",
     "vitest": "^0.34.6"

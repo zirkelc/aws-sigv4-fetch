@@ -4,6 +4,14 @@ import { defaultProvider } from "@aws-sdk/credential-provider-node";
 import { HttpRequest } from "@smithy/protocol-http";
 import { SignatureV4 } from "@smithy/signature-v4";
 
+// src/encode-rfc3986.ts
+var encodeRfc3986 = (str) => {
+  return str.replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+};
+
 // src/get-fetch.ts
 var getFetchFn = (customFetchFn) => {
   if (customFetchFn) {
@@ -40,14 +48,21 @@ var getHeaders = (init) => {
 
 // src/create-signed-fetcher.ts
 var createSignedFetcher = (opts) => {
-  const service = opts.service;
-  const region = opts.region || "us-east-1";
-  const credentials = opts.credentials || defaultProvider();
   const fetchFn = getFetchFn(opts.fetch);
   return async (input, init) => {
+    const service = opts.service;
+    const region = opts.region || "us-east-1";
+    const credentials = opts.credentials || defaultProvider();
     const url = new URL(
       typeof input === "string" ? input : input instanceof URL ? input.href : input.url
     );
+    if (opts.encodeRfc3986) {
+      url.pathname = encodeRfc3986(url.pathname);
+      url.searchParams.forEach((value, key) => {
+        url.searchParams.delete(key);
+        url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
+      });
+    }
     const headers = getHeaders(init?.headers);
     headers.set("host", url.host);
     const request = new HttpRequest({
@@ -71,7 +86,7 @@ var createSignedFetcher = (opts) => {
       sha256: Sha256
     });
     const signedRequest = await signer.sign(request);
-    return fetchFn(input, {
+    return fetchFn(url, {
       ...init,
       headers: signedRequest.headers,
       body: signedRequest.body,

@@ -8,7 +8,7 @@ var __export = (target, all) => {
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
+    for (const key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
         __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
@@ -28,6 +28,14 @@ var import_sha256_js = require("@aws-crypto/sha256-js");
 var import_credential_provider_node = require("@aws-sdk/credential-provider-node");
 var import_protocol_http = require("@smithy/protocol-http");
 var import_signature_v4 = require("@smithy/signature-v4");
+
+// src/encode-rfc3986.ts
+var encodeRfc3986 = (str) => {
+  return str.replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+  );
+};
 
 // src/get-fetch.ts
 var getFetchFn = (customFetchFn) => {
@@ -65,14 +73,21 @@ var getHeaders = (init) => {
 
 // src/create-signed-fetcher.ts
 var createSignedFetcher = (opts) => {
-  const service = opts.service;
-  const region = opts.region || "us-east-1";
-  const credentials = opts.credentials || (0, import_credential_provider_node.defaultProvider)();
   const fetchFn = getFetchFn(opts.fetch);
   return async (input, init) => {
+    const service = opts.service;
+    const region = opts.region || "us-east-1";
+    const credentials = opts.credentials || (0, import_credential_provider_node.defaultProvider)();
     const url = new URL(
       typeof input === "string" ? input : input instanceof URL ? input.href : input.url
     );
+    if (opts.encodeRfc3986) {
+      url.pathname = encodeRfc3986(url.pathname);
+      url.searchParams.forEach((value, key) => {
+        url.searchParams.delete(key);
+        url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
+      });
+    }
     const headers = getHeaders(init?.headers);
     headers.set("host", url.host);
     const request = new import_protocol_http.HttpRequest({
@@ -96,7 +111,7 @@ var createSignedFetcher = (opts) => {
       sha256: import_sha256_js.Sha256
     });
     const signedRequest = await signer.sign(request);
-    return fetchFn(input, {
+    return fetchFn(url, {
       ...init,
       headers: signedRequest.headers,
       body: signedRequest.body,

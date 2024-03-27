@@ -44,7 +44,7 @@ describe("createSignedFetcher", () => {
 			expect(fetchMock).toHaveBeenCalled();
 			const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
 
-			expect(fetchUrl).toEqual(url);
+			expect(new URL(fetchUrl.toString())).toEqual(new URL(url.toString()));
 			expect(fetchInit.method).toEqual("GET");
 			expect(fetchInit.body).toEqual(undefined);
 			expect(fetchInit.headers).toEqual(expect.any(Object));
@@ -68,7 +68,7 @@ describe("createSignedFetcher", () => {
 		expect(fetchMock).toHaveBeenCalled();
 		const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
 
-		expect(fetchUrl).toEqual(url);
+		expect(new URL(fetchUrl.toString())).toEqual(new URL(url.toString()));
 		expect(fetchInit.method).toEqual(init.method.toUpperCase());
 		expect(fetchInit.body).toEqual(undefined);
 		expect(fetchInit.headers).toEqual(expect.any(Object));
@@ -91,7 +91,7 @@ describe("createSignedFetcher", () => {
 		expect(fetchMock).toHaveBeenCalled();
 		const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
 
-		expect(fetchUrl).toEqual(url);
+		expect(new URL(fetchUrl.toString())).toEqual(new URL(url.toString()));
 		expect(fetchInit.method).toEqual(init.method);
 		expect(fetchInit.body).toEqual(body);
 		expect(fetchInit.headers).toEqual(expect.any(Object));
