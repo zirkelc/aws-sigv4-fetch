@@ -51,14 +51,14 @@ export const createSignedFetcher: CreateSignedFetcher = (
 				  : input.url,
 		);
 
-		// encode path and query string according to RFC 3986
-		if (opts.encodeRfc3986) {
-			url.pathname = encodeRfc3986(url.pathname);
-			url.searchParams.forEach((value, key) => {
-				url.searchParams.delete(key);
-				url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
-			});
-		}
+		// // encode path and query string according to RFC 3986
+		// if (opts.encodeRfc3986) {
+		// 	url.pathname = encodeRfc3986(url.pathname);
+		// 	url.searchParams.forEach((value, key) => {
+		// 		url.searchParams.delete(key);
+		// 		url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
+		// 	});
+		// }
 
 		const headers = getHeaders(init?.headers);
 		// host is required by AWS Signature V4: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
@@ -83,9 +83,12 @@ export const createSignedFetcher: CreateSignedFetcher = (
 			service,
 			region,
 			sha256: Sha256,
+      // uriEscapePath: true,
 		});
 
 		const signedRequest = await signer.sign(request);
+
+    console.log(signedRequest);
 
 		return fetchFn(url, {
 			...init,

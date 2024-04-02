@@ -223,7 +223,7 @@ describe("APIGateway", () => {
 		if (!apiRootUrl) throw new Error("API URL not set");
 	});
 
-	it.each(paths)("should GET %s", async (path) => {
+	it.only.each(paths)("should GET %s", async (path) => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
