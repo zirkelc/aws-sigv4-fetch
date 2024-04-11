@@ -1,7 +1,7 @@
 
 [![CI](https://github.com/zirkelc/aws-sigv4-fetch/actions/workflows/ci.yml/badge.svg)](https://github.com/zirkelc/aws-sigv4-fetch/actions/workflows/ci.yml)
-![npm](https://img.shields.io/npm/v/aws-sigv4-fetch)
-![npm](https://img.shields.io/npm/dt/aws-sigv4-fetch)
+[![npm](https://img.shields.io/npm/v/aws-sigv4-fetch)(https://www.npmjs.com/package/aws-sigv4-fetch)
+[![npm](https://img.shields.io/npm/dt/aws-sigv4-fetch)](https://www.npmjs.com/package/aws-sigv4-fetch)
 
 # aws-sigv4-fetch
 AWS SignatureV4 fetch API function to automatically sign HTTP request with given AWS credentials. Built entirely on the newest version of the official [AWS SDK for JS](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html).
