@@ -223,11 +223,10 @@ describe("APIGateway", () => {
 		if (!apiRootUrl) throw new Error("API URL not set");
 	});
 
-	it.only.each(paths)("should GET %s", async (path) => {
+	it.each(paths)("should GET %s", async (path) => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
-			encodeRfc3986: true,
 		});
 
 		console.log(`${apiRootUrl}${path}`);
@@ -243,7 +242,6 @@ describe("APIGateway", () => {
 		const fetch = createSignedFetcher({
 			service: SERVICE,
 			region: REGION,
-			encodeRfc3986: true,
 		});
 
 		const response = await fetch(`${apiRootUrl}${path}`, {
