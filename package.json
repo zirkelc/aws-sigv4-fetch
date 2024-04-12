@@ -47,7 +47,7 @@
     "@aws-sdk/credential-provider-node": "^3.358.0",
     "@aws-sdk/types": "^3.357.0",
     "@smithy/protocol-http": "^3.3.0",
-    "@smithy/signature-v4": "^2.2.0"
+    "@smithy/signature-v4": "^2.3.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.1",

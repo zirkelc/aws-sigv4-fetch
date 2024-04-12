@@ -3,7 +3,6 @@ import { defaultProvider } from "@aws-sdk/credential-provider-node";
 import type { AwsCredentialIdentity, Provider } from "@aws-sdk/types";
 import { HttpRequest } from "@smithy/protocol-http";
 import { SignatureV4 } from "@smithy/signature-v4";
-import { encodeRfc3986 } from "./encode-rfc3986.js";
 import { getFetchFn } from "./get-fetch.js";
 import { getHeaders } from "./get-headers.js";
 
@@ -12,15 +11,6 @@ export type SignedFetcherOptions = {
 	region?: string;
 	credentials?: AwsCredentialIdentity | Provider<AwsCredentialIdentity>;
 	fetch?: typeof fetch;
-	/**
-	 * Automatically encode the request path and query string according to RFC 3986.
-	 * This might be necessary for AWS services that require strict adherence to the RFC 3986 standard.
-	 * For example, AWS API Gateway requires the path and query string to be encoded according to RFC 3986,
-	 * otherwise it will return a 403 error because the calculated does not match the signature you provided.
-	 *
-	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#encoding_for_rfc3986 | Encoding for RFC3986}
-	 */
-	encodeRfc3986?: boolean;
 };
 
 export type CreateSignedFetcher = (init: SignedFetcherOptions) => typeof fetch;
@@ -51,15 +41,6 @@ export const createSignedFetcher: CreateSignedFetcher = (
 				  : input.url,
 		);
 
-		// // encode path and query string according to RFC 3986
-		// if (opts.encodeRfc3986) {
-		// 	url.pathname = encodeRfc3986(url.pathname);
-		// 	url.searchParams.forEach((value, key) => {
-		// 		url.searchParams.delete(key);
-		// 		url.searchParams.append(encodeRfc3986(key), encodeRfc3986(value));
-		// 	});
-		// }
-
 		const headers = getHeaders(init?.headers);
 		// host is required by AWS Signature V4: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 		headers.set("host", url.host);
@@ -83,12 +64,9 @@ export const createSignedFetcher: CreateSignedFetcher = (
 			service,
 			region,
 			sha256: Sha256,
-      // uriEscapePath: true,
 		});
 
 		const signedRequest = await signer.sign(request);
-
-    console.log(signedRequest);
 
 		return fetchFn(url, {
 			...init,
