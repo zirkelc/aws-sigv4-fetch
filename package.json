@@ -1,6 +1,6 @@
 {
   "name": "aws-sigv4-fetch",
-  "version": "3.0.0",
+  "version": "3.0.1-alpha.1",
   "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
   "packageManager": "pnpm@8.8.0",
   "type": "module",
@@ -23,7 +23,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "pnpm build && vitest",
+    "test": "vitest",
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
@@ -45,10 +45,9 @@
     "@aws-crypto/sha256-js": "^4.0.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.359.0",
     "@aws-sdk/credential-provider-node": "^3.358.0",
-    "@aws-sdk/protocol-http": "^3.357.0",
-    "@aws-sdk/querystring-parser": "^3.357.0",
-    "@aws-sdk/signature-v4": "^3.357.0",
-    "@aws-sdk/types": "^3.357.0"
+    "@aws-sdk/types": "^3.357.0",
+    "@smithy/protocol-http": "^3.3.0",
+    "@smithy/signature-v4": "^2.3.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.1",

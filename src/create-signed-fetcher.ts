@@ -1,8 +1,8 @@
 import { Sha256 } from "@aws-crypto/sha256-js";
 import { defaultProvider } from "@aws-sdk/credential-provider-node";
-import { HttpRequest } from "@aws-sdk/protocol-http";
-import { SignatureV4 } from "@aws-sdk/signature-v4";
 import type { AwsCredentialIdentity, Provider } from "@aws-sdk/types";
+import { HttpRequest } from "@smithy/protocol-http";
+import { SignatureV4 } from "@smithy/signature-v4";
 import { getFetchFn } from "./get-fetch.js";
 import { getHeaders } from "./get-headers.js";
 
@@ -26,13 +26,13 @@ export type CreateSignedFetcher = (init: SignedFetcherOptions) => typeof fetch;
 export const createSignedFetcher: CreateSignedFetcher = (
 	opts: SignedFetcherOptions,
 ): typeof fetch => {
-	const service = opts.service; // TODO match service from URL
-	const region = opts.region || "us-east-1"; // TODO match region from URL
-	const credentials = opts.credentials || defaultProvider();
-
 	const fetchFn = getFetchFn(opts.fetch);
 
 	return async (input, init?) => {
+		const service = opts.service;
+		const region = opts.region || "us-east-1";
+		const credentials = opts.credentials || defaultProvider();
+
 		const url = new URL(
 			typeof input === "string"
 				? input
@@ -68,7 +68,7 @@ export const createSignedFetcher: CreateSignedFetcher = (
 
 		const signedRequest = await signer.sign(request);
 
-		return fetchFn(input, {
+		return fetchFn(url, {
 			...init,
 			headers: signedRequest.headers,
 			body: signedRequest.body,
