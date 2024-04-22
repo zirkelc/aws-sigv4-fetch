@@ -117,7 +117,6 @@ const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1', f
 
 ## To Do
 - [ ] add integration tests for other AWS services like S3, DynamoDB, etc.
-- [ ] migrate to `@smithy/*` packages (https://github.com/zirkelc/aws-sigv4-fetch/issues/8)
 - [ ] guess AWS service and region from URL
 
 ## Resources
