@@ -115,12 +115,7 @@ import { createSignedFetcher } from 'aws-sigv4-fetch';
 const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1', fetch });
 ```
 
-## To Do
-- [ ] add integration tests for other AWS services like S3, DynamoDB, etc.
-- [ ] guess AWS service and region from URL
-
 ## Resources
 - [Sign GraphQL Request with AWS IAM and Signature V4](https://dev.to/zirkelc/sign-graphql-request-with-aws-iam-and-signature-v4-2il6)
 - [Amplify Signing a request from Lambda](https://docs.amplify.aws/lib/graphqlapi/graphql-from-nodejs/q/platform/js/#signing-a-request-from-lambda)
-- [Signing HTTP requests to Amazon OpenSearch Service
-](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/request-signing.html#request-signing-node)
+- [Signing HTTP requests to Amazon OpenSearch Service](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/request-signing.html#request-signing-node)
