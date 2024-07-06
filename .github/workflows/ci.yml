@@ -54,7 +54,8 @@ jobs:
     needs: [lint,test]
     if: github.ref == 'refs/heads/main'
     permissions:
-      id-token: write
+      id-token: write # needed for npm publish with provenance
+      contents: write # needed for github release
 
     steps:
       - uses: actions/checkout@v4
