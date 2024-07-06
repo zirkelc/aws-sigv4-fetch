@@ -10,17 +10,6 @@ AWS SignatureV4 fetch API function to automatically sign HTTP request with given
 
 [AWS documentation on Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
 
-## ⚠️ ESM Support
-Since v3, this package ships with ESM and CommonJS support. That means you can `import` or `require` the package in your project.
-
-```ts
-// ESM
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-
-// CommonJS
-const { createSignedFetcher } = require('aws-sigv4-fetch');
-```
-
 ## Install
 ```sh
 npm install --save aws-sigv4-fetch
@@ -28,6 +17,17 @@ npm install --save aws-sigv4-fetch
 yard add aws-sigv4-fetch
 
 pnpm add aws-sigv4-fetch
+```
+
+## ESM and CommonJS
+This package ships with ES Module and CommonJS support. That means you can `import` or `require` the package in your project depending on your mdoule format.
+
+```ts
+// ESM
+import { createSignedFetcher } from 'aws-sigv4-fetch';
+
+// CommonJS
+const { createSignedFetcher } = require('aws-sigv4-fetch');
 ```
 
 ## Usage

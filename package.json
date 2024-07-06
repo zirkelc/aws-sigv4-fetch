@@ -2,7 +2,7 @@
   "name": "aws-sigv4-fetch",
   "version": "3.1.1",
   "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
-  "packageManager": "pnpm@8.8.0",
+  "packageManager": "pnpm@9.3.0",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -19,6 +19,9 @@
       }
     }
   },
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
     "dist"
   ],
@@ -34,28 +37,24 @@
     "type": "git",
     "url": "git+https://github.com/zirkelc/aws-sigv4-fetch.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/zirkelc/aws-sigv4-fetch/issues"
   },
   "homepage": "https://github.com/zirkelc/aws-sigv4-fetch#readme",
   "dependencies": {
-    "@aws-crypto/sha256-js": "^5.0.0",
-    "@aws-sdk/credential-provider-node": "^3.358.0",
-    "@aws-sdk/types": "^3.357.0",
-    "@smithy/protocol-http": "^4.0.0",
-    "@smithy/signature-v4": "^3.0.0"
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/credential-provider-node": "^3.609.0",
+    "@aws-sdk/types": "^3.609.0",
+    "@smithy/protocol-http": "^4.0.3",
+    "@smithy/signature-v4": "^3.1.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.5.1",
-    "@tsconfig/node18": "^18.2.2",
+    "@biomejs/biome": "1.8.3",
+    "@tsconfig/node20": "^20.1.4",
     "cross-fetch": "^4.0.0",
-    "dual-publish": "^4.0.0",
-    "np": "^10.0.2",
-    "tsup": "^8.0.1",
-    "typescript": "^5.2.0",
-    "vitest": "^0.34.6"
+    "np": "^10.0.6",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
   }
 }
