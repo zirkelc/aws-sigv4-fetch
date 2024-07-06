@@ -13,21 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
-      - name: Install
+      - name: Setup and Install
         id: install
-        run: |
-          pnpm i
+        uses: ./.github/actions/setup-and-install
 
       - name: Lint
         run: |
@@ -44,19 +34,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
-      - name: Setup Node.js ${{ matrix.version }}
-        uses: actions/setup-node@v3
+      - name: Setup and Install
+        id: install
+        uses: ./.github/actions/setup-and-install
         with:
           node-version: ${{ matrix.version }}
-          cache: 'pnpm'
-
-      - name: Install
-        id: install
-        run: |
-          pnpm i
 
       - name: Build
         run: |
