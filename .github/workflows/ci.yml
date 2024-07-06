@@ -72,7 +72,7 @@ jobs:
         uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          dry-run: true
+          dry-run: false
           provenance: true
 
       - name: Post publish
@@ -94,6 +94,6 @@ jobs:
           allowUpdates: true
           generateReleaseNotes: true
           commit: ${{ github.sha }}
-          draft: true
+          draft: false
           name: v${{ steps.publish.outputs.version }}
           tag: v${{ steps.publish.outputs.version }}

@@ -13,7 +13,6 @@
   },
   "include": [
     "src/**/*.ts",
-    "_vitest.config.ts",
-    "vitest.workspace.mts",
+    "vitest.workspace.ts",
   ],
 }
