@@ -14,7 +14,7 @@ AWS SignatureV4 fetch API function to automatically sign HTTP request with given
 ```sh
 npm install --save aws-sigv4-fetch
 
-yard add aws-sigv4-fetch
+yarn add aws-sigv4-fetch
 
 pnpm add aws-sigv4-fetch
 ```
