@@ -30,7 +30,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "watch": "pnpm build -- --watch src",
     "prepublishOnly": "pnpm build",
-    "lint": "pnpm biome check --apply --no-errors-on-unmatched src test",
+    "lint": "pnpm biome check --write --no-errors-on-unmatched src test",
     "release": "np"
   },
   "repository": {

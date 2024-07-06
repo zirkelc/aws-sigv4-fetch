@@ -34,7 +34,7 @@ jobs:
         version: [18, 20, 22]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup and Install
         id: install
@@ -87,7 +87,7 @@ jobs:
           exit 0
 
       - name: Create Release
-        if: steps.publish.outputs.type != 'none'
+        if: steps.publish.outputs.type != ''
         id: release
         uses: ncipollo/release-action@v1 # https://github.com/ncipollo/release-action
         with:

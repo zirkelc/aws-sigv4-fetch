@@ -1,19 +1,24 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.5.1/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"suspicious": {
-				"noExplicitAny": "off"
-			},
-			"complexity": {
-				"useLiteralKeys": "off",
-				"noForEach": "off"
-			}
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/1.5.1/schema.json",
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": true
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "complexity": {
+        "useLiteralKeys": "off",
+        "noForEach": "off"
+      }
+    }
+  }
 }

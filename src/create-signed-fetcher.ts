@@ -37,8 +37,8 @@ export const createSignedFetcher: CreateSignedFetcher = (
 			typeof input === "string"
 				? input
 				: input instanceof URL
-				  ? input.href
-				  : input.url,
+					? input.href
+					: input.url,
 		);
 
 		const headers = getHeaders(init?.headers);
