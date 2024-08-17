@@ -4,10 +4,17 @@
   "configurations": [
     {
       "type": "node-terminal",
-      "name": "Run Test (pnpm test)",
+      "name": "Test (pnpm vitest)",
       "request": "launch",
       "command": "pnpm vitest ${relativeFile}",
       "cwd": "${workspaceRoot}"
+    },
+    {
+      "type": "node-terminal",
+      "name": "Debug (pnpm tsx)",
+      "request": "launch",
+      "command": "pnpm tsx ${relativeFile}",
+      "cwd": "${workspaceFolder}"
     },
   ]
 }
