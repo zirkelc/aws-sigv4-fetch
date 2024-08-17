@@ -48,6 +48,31 @@ jobs:
       - name: Test
         run: pnpm test
 
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup and Install
+        id: install
+        uses: ./.github/actions/setup-and-install
+        with:
+          node-version: 20
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test:coverage
+
+      - name: Coverage
+        if: ${{ steps.install.conclusion == 'success' }}
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          vite-config-path: vitest.config.unit.ts
+
   release:
     name: Release
     runs-on: ubuntu-latest
