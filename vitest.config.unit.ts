@@ -15,7 +15,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			// json-summary is required for https://github.com/davelosert/vitest-coverage-report-action
-			reporter: ["json-summary", "json", "text-summary"],
+			reporter: ["json-summary", "json", "text-summary", "html"],
 			thresholds: {
 				lines: 80,
 				statements: 80,

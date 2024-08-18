@@ -12,7 +12,7 @@ import {
 	PutMethodResponseCommand,
 } from "@aws-sdk/client-api-gateway";
 import "cross-fetch/polyfill";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createSignedFetcher } from "../../src/index.js";
 
 const SERVICE = "execute-api";
@@ -20,8 +20,10 @@ const REGION = "us-east-1";
 const STAGE = "test";
 const API_NAME = "aws-sigv4-fetch";
 const API_RESPONSE = { foo: "bar" };
+const paths = ["/mock", "/mock/foo", "/mock/foo-*"];
 
 let apiRootUrl = "";
+let signedFetch: typeof fetch;
 
 beforeAll(async () => {
 	const client = new APIGatewayClient({ region: REGION });
@@ -216,52 +218,60 @@ beforeAll(async () => {
 	};
 });
 
-const paths = ["/mock", "/mock/foo", "/mock/foo-*"];
+beforeEach(() => {
+	signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+});
 
 describe("APIGateway", () => {
 	beforeAll(async () => {
 		if (!apiRootUrl) throw new Error("API URL not set");
 	});
 
-	it.each(paths)("should GET %s", async (path) => {
-		const fetch = createSignedFetcher({
-			service: SERVICE,
-			region: REGION,
+	describe("GET", () => {
+		describe.each(paths)("Path: %s", async (path) => {
+			it("should fetch with string", async () => {
+				const response = await signedFetch(`${apiRootUrl}${path}`, {
+					method: "GET",
+				});
+				expect(response.status).toBe(200);
+
+				const data = await response.json();
+				expect(data).toEqual(API_RESPONSE);
+			});
+
+			it("should throw an error for unsigned fetch", async () => {
+				const response = await fetch(`${apiRootUrl}/mock`, {
+					method: "GET",
+				});
+
+				expect(response.status).toBe(403);
+				expect(response.statusText).toBe("Forbidden");
+			});
 		});
-
-		console.log(`${apiRootUrl}${path}`);
-		const response = await fetch(`${apiRootUrl}${path}`, { method: "GET" });
-
-		expect(response.status).toBe(200);
-
-		const data = await response.json();
-		expect(data).toEqual(API_RESPONSE);
 	});
 
-	it.each(paths)("should POST %s", async (path) => {
-		const fetch = createSignedFetcher({
-			service: SERVICE,
-			region: REGION,
+	describe("POST", () => {
+		describe.each(paths)("Path: %s", async (path) => {
+			it("should fetch with string", async () => {
+				const response = await signedFetch(`${apiRootUrl}${path}`, {
+					method: "POST",
+					body: JSON.stringify({}),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+				expect(response.status).toBe(200);
+
+				const data = await response.json();
+				expect(data).toEqual(API_RESPONSE);
+			});
+
+			it("should throw an error for unsigned fetch", async () => {
+				const response = await fetch(`${apiRootUrl}/mock`, { method: "POST" });
+
+				expect(response.status).toBe(403);
+				expect(response.statusText).toBe("Forbidden");
+			});
 		});
-
-		const response = await fetch(`${apiRootUrl}${path}`, {
-			method: "POST",
-			body: JSON.stringify({}),
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
-
-		expect(response.status).toBe(200);
-
-		const data = await response.json();
-		expect(data).toEqual(API_RESPONSE);
-	});
-
-	it("should throw an error for unsigned fetch", async () => {
-		const response = await fetch(`${apiRootUrl}/mock`);
-
-		expect(response.status).toBe(403);
-		expect(response.statusText).toBe("Forbidden");
 	});
 });

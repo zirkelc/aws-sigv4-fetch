@@ -2,6 +2,6 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	test: {
-		name: "esm",
+		name: "e2e/module-commonjs",
 	},
 });

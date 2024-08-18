@@ -2,6 +2,6 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	test: {
-		name: "e2e/api-gateway",
+		name: "e2e/aws-s3",
 	},
 });
