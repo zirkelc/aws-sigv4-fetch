@@ -7,9 +7,22 @@ const urls = [
   // "http://example.com/foo?bar=baz",
   "http://example.com/foo?bar=baz#qux",
 ];
+const fetchMock = vi.fn(fetch);
+let signedFetch: typeof fetch;
 
 beforeEach(() => {
   vi.resetAllMocks();
+
+  signedFetch = createSignedFetcher({
+    service: "dummyService",
+    region: "dummyRegion",
+    credentials: {
+      accessKeyId: "dummyAccessKeyId",
+      secretAccessKey: "dummySecretAccessKey",
+      sessionToken: "dummySessionToken",
+    },
+    fetch: fetchMock,
+  });
 });
 
 const headersSigned = expect.objectContaining({
@@ -33,25 +46,12 @@ const headersUnsignedPayload = expect.objectContaining({
 });
 
 describe("createSignedFetcher", () => {
-  const fetchMock = vi.fn<Parameters<typeof fetch>>();
-
-  const fetcher = createSignedFetcher({
-    service: "dummyService",
-    region: "dummyRegion",
-    credentials: {
-      accessKeyId: "dummyAccessKeyId",
-      secretAccessKey: "dummySecretAccessKey",
-      sessionToken: "dummySessionToken",
-    },
-    fetch: fetchMock,
-  });
-
   describe.each(urls)("URL: %s", (url) => {
     describe.each([undefined, "GET", "POST"])("Method: %s", (method) => {
       const expectedMethod = method ?? "GET";
 
       it("should fetch with string", async () => {
-        await fetcher(url, method ? { method } : undefined);
+        await signedFetch(url, method ? { method } : undefined);
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -63,7 +63,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with URL", async () => {
-        await fetcher(new URL(url), method ? { method } : undefined);
+        await signedFetch(new URL(url), method ? { method } : undefined);
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -75,7 +75,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request", async () => {
-        await fetcher(new Request(url, method ? { method } : undefined));
+        await signedFetch(new Request(url, method ? { method } : undefined));
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -87,7 +87,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request and options", async () => {
-        await fetcher(new Request(url), method ? { method } : undefined);
+        await signedFetch(new Request(url), method ? { method } : undefined);
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -103,7 +103,7 @@ describe("createSignedFetcher", () => {
       const body = undefined;
 
       it("should fetch with string", async () => {
-        await fetcher(url, { method: "POST", body });
+        await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -115,7 +115,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with URL", async () => {
-        await fetcher(new URL(url), { method: "POST", body });
+        await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -127,7 +127,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request", async () => {
-        await fetcher(new Request(url, { method: "POST", body }));
+        await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -143,7 +143,7 @@ describe("createSignedFetcher", () => {
       const body = "foo";
 
       it("should fetch with string", async () => {
-        await fetcher(url, { method: "POST", body });
+        await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -155,7 +155,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with URL", async () => {
-        await fetcher(new URL(url), { method: "POST", body });
+        await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -167,7 +167,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request", async () => {
-        await fetcher(new Request(url, { method: "POST", body }));
+        await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -183,7 +183,7 @@ describe("createSignedFetcher", () => {
       const body = new URLSearchParams({ foo: "bar" });
 
       it("should fetch with string", async () => {
-        await fetcher(url, { method: "POST", body });
+        await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -195,7 +195,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with URL", async () => {
-        await fetcher(new URL(url), { method: "POST", body });
+        await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -207,7 +207,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request", async () => {
-        await fetcher(new Request(url, { method: "POST", body }));
+        await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -224,7 +224,7 @@ describe("createSignedFetcher", () => {
       body.append("foo", "bar");
 
       it("should fetch with string", async () => {
-        await fetcher(url, { method: "POST", body });
+        await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -236,7 +236,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with URL", async () => {
-        await fetcher(new URL(url), { method: "POST", body });
+        await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -248,7 +248,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request", async () => {
-        await fetcher(new Request(url, { method: "POST", body }));
+        await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -264,7 +264,7 @@ describe("createSignedFetcher", () => {
       const body = new Blob(["foo"]);
 
       it("should fetch with string", async () => {
-        await fetcher(url, { method: "POST", body });
+        await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -276,7 +276,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with URL", async () => {
-        await fetcher(new URL(url), { method: "POST", body });
+        await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
@@ -288,7 +288,7 @@ describe("createSignedFetcher", () => {
       });
 
       it("should fetch with Request", async () => {
-        await fetcher(new Request(url, { method: "POST", body }));
+        await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
         const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
