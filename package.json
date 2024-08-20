@@ -28,11 +28,10 @@
   "scripts": {
     "test": "vitest",
     "test:coverage": "vitest --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json --coverage.reporter=text-summary --coverage.reporter=html",
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "watch": "pnpm build -- --watch src",
+    "build": "tsup && attw --pack .",
+    "watch": "tsup --watch src",
     "prepublishOnly": "pnpm build",
-    "lint": "pnpm biome check --write --no-errors-on-unmatched src test",
-    "release": "np"
+    "lint": "pnpm biome check --write --no-errors-on-unmatched src test"
   },
   "repository": {
     "type": "git",
@@ -50,6 +49,7 @@
     "@smithy/signature-v4": "^3.1.2"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.4",
     "@biomejs/biome": "1.8.3",
     "@tsconfig/node20": "^20.1.4",
     "@vitest/coverage-v8": "^2.0.4",
