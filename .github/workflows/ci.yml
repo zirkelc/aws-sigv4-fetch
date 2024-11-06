@@ -28,7 +28,7 @@ jobs:
 
       - name: Setup and Install
         id: install
-        uses: ./.github/actions/setup-and-install
+        uses: zirkelc/setup-and-install@v1
 
       - name: Lint
         run: pnpm lint
@@ -46,7 +46,7 @@ jobs:
 
       - name: Setup and Install
         id: install
-        uses: ./.github/actions/setup-and-install
+        uses: zirkelc/setup-and-install@v1
         with:
           node-version: ${{ matrix.version }}
 
@@ -65,9 +65,7 @@ jobs:
 
       - name: Setup and Install
         id: install
-        uses: ./.github/actions/setup-and-install
-        with:
-          node-version: 20
+        uses: zirkelc/setup-and-install@v1
 
       - name: Build
         run: pnpm build
@@ -92,7 +90,7 @@ jobs:
 
       - name: Setup and Install
         id: install
-        uses: ./.github/actions/setup-and-install
+        uses: zirkelc/setup-and-install@v1
 
       - name: Build
         run: pnpm build
