@@ -3,7 +3,6 @@
   "compilerOptions": {
     "lib": [
       "ES2023",
-      "DOM"
     ],
     "outDir": "dist",
     "declaration": true,
@@ -11,6 +10,6 @@
   },
   "include": [
     "src/**/*.ts",
-    "vitest.workspace.ts",
+    "vitest.*.ts",
   ],
 }
