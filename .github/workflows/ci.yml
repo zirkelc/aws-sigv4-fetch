@@ -79,6 +79,25 @@ jobs:
         with:
           vite-config-path: vitest.config.unit.ts
 
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: corepack enable
+
+      - name: Setup and Install
+        id: install
+        uses: zirkelc/setup-and-install@v1
+        with:
+          node-version: 20
+
+      - name: Build
+        run: pnpm build
+
+      - name: Publish Preview
+        run: npx pkg-pr-new publish
+
   release:
     name: Release
     runs-on: ubuntu-latest
