@@ -61,9 +61,9 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
 
     return fetchFn(url, {
       ...init,
+      method,
+      body,
       headers: signedRequest.headers,
-      body: signedRequest.body,
-      method: signedRequest.method,
     });
   };
 };
