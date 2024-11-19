@@ -63,6 +63,7 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
       ...init,
       method,
       body,
+      // Copy only the signed headers, because the body may be modified by the signer
       headers: signedRequest.headers,
     });
   };
