@@ -299,5 +299,57 @@ describe("createSignedFetcher", () => {
         expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
       });
     });
+
+    describe("Body: Uint8Array([0xde, 0xad, 0xbe, 0xef])", () => {
+      const body = new Uint8Array([0xde, 0xad, 0xbe, 0xef]);
+
+      it("should fetch with string", async () => {
+        // Arrange
+        const expectedUrl = new URL(url);
+
+        // Act
+        await signedFetch(url, { method: "POST", body });
+
+        // Assert
+        expect(fetchMock).toHaveBeenCalled();
+        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        expect(fetchUrl).toEqual(expectedUrl);
+        expect(fetchInit?.method).toEqual("POST");
+        expect(fetchInit?.body).toEqual(body);
+        expect(fetchInit?.headers).toEqual(headersSigned);
+      });
+
+      it("should fetch with URL", async () => {
+        // Arrange
+        const expectedUrl = new URL(url);
+
+        // Act
+        await signedFetch(new URL(url), { method: "POST", body });
+
+        // Assert
+        expect(fetchMock).toHaveBeenCalled();
+        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        expect(fetchUrl).toEqual(expectedUrl);
+        expect(fetchInit?.method).toEqual("POST");
+        expect(fetchInit?.body).toEqual(body);
+        expect(fetchInit?.headers).toEqual(headersSigned);
+      });
+
+      it.only("should fetch with Request", async () => {
+        // Arrange
+        const expectedUrl = new URL(url);
+
+        // Act
+        await signedFetch(new Request(url, { method: "POST", body }));
+
+        // Assert
+        expect(fetchMock).toHaveBeenCalled();
+        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        expect(fetchUrl).toEqual(expectedUrl);
+        expect(fetchInit?.method).toEqual("POST");
+        expect(fetchInit?.body).toEqual(expect.any(ReadableStream));
+        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+      });
+    });
   });
 });
