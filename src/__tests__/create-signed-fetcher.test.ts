@@ -10,6 +10,9 @@ const urls = [
 const fetchMock = vi.fn(fetch);
 let signedFetch: typeof fetch;
 
+vi.useFakeTimers();
+vi.setSystemTime("2024-01-01T00:00:00.000Z");
+
 beforeEach(() => {
   vi.resetAllMocks();
 
@@ -44,6 +47,8 @@ const headersUnsignedPayload = expect.objectContaining({
     /AWS4-HMAC-SHA256 Credential=([a-zA-Z0-9]+)\/(\d{8})\/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)\/aws4_request, SignedHeaders=([a-zA-Z0-9;-]+), Signature=([a-fA-F0-9]{64})/,
   ),
 });
+
+// TODO use signed authorization header for all tests
 
 describe("createSignedFetcher", () => {
   describe.each(urls)("URL: %s", (url) => {
@@ -335,7 +340,7 @@ describe("createSignedFetcher", () => {
         expect(fetchInit?.headers).toEqual(headersSigned);
       });
 
-      it.only("should fetch with Request", async () => {
+      it("should fetch with Request", async () => {
         // Arrange
         const expectedUrl = new URL(url);
 
