@@ -31,15 +31,15 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
     const region = opts.region || "us-east-1";
     const credentials = opts.credentials || defaultProvider();
 
-    const { url, method, body, headers } = parseRequest(input, init);
+    const { url, ...request } = parseRequest(input, init);
 
     // host is required by AWS Signature V4: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-    headers["host"] = url.host;
+    request.headers["host"] = url.host;
 
-    const request = new HttpRequest({
-      method,
-      body,
-      headers,
+    const httpRequest = new HttpRequest({
+      method: request.method,
+      body: request.body,
+      headers: request.headers,
       hostname: url.hostname,
       path: url.pathname,
       protocol: url.protocol,
@@ -57,14 +57,11 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
       sha256: Sha256,
     });
 
-    const signedRequest = await signer.sign(request);
+    const signedHttpRequest = await signer.sign(httpRequest);
 
-    return fetchFn(url, {
-      ...init,
-      method,
-      body,
-      // Copy only the signed headers, because the body may be modified by the signer
-      headers: signedRequest.headers,
-    });
+    // Copy only the signed headers, because the body may be modified by the signer
+    request.headers = signedHttpRequest.headers;
+
+    return fetchFn(url, request);
   };
 };
