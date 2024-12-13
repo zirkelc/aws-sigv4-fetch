@@ -32,52 +32,39 @@ const { createSignedFetcher } = require('aws-sigv4-fetch');
 
 ## Usage
 This package exports a function `createSignedFetcher` that returns a `fetch` function to automatically sign HTTP requests with AWS Signature V4 for the given AWS service and region. The credentials can be passed to the function directly, or they will be retrieved from the environment by `defaultProvider()` from package [`@aws-sdk/credential-provider-node`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_credential_provider_node.html).
+
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
 
-const signedFetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
-const url = 'https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql';
+const signedFetch = createSignedFetcher({ service: 's3', region: 'eu-west-1', credentials: { accessKeyId: '...', secretAccessKey: '...' } });
 
-const body = { a: 1 };
-
-const response = await signedFetch(url, {
-  method: 'post',
-  body: JSON.stringify(body),
-  headers: {'Content-Type': 'application/json'}
-});
+const response = await signedFetch('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json');
 
 const data = await response.json();
 ```
 
-### Sign GraphQL Requests with `graphql-request`
-If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch`option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
+The returned `signedFetch` function wraps the `fetch` function and automatically signs the request with AWS Signature V4. It accepts the same arguments as the `fetch` function.
 
 ```ts
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-import { GraphQLClient } from 'graphql-request';
+type Fetch = (input: string | Request | URL, init?: RequestInit) => Promise<Response>;
 
-const query = `
-  mutation CreateItem($input: CreateItemInput!) {
-    createItem(input: $input) {
-      id
-      createdAt
-      updatedAt
-      name
-    }
-  }
-`;
+const signedFetch: Fetch = createSignedFetcher({ service: 's3', region: 'eu-west-1' });
 
-const variables = {
-  input: {
-    name,
-  },
-};
+// string
+await signedFetch('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json');
 
-const client = new GraphQLClient('https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql', {
-  fetch: createSignedFetcher({ service: 'appsync', region: 'eu-west-1' }),
+// URL
+await signedFetch(new URL('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json'));
+
+// Request
+await signedFetch(new Request('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json'));
+
+// additional options
+await signedFetch('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json', {
+  method: 'POST',
+  body: JSON.stringify({ a: 1 }),
+  headers: { 'Content-Type': 'application/json' }
 });
-
-const result = await client.request(query, variables);
 ```
 
 ### Fetch
@@ -113,6 +100,60 @@ import { createSignedFetcher } from 'aws-sigv4-fetch';
 
 // fetch was imported locally and must be passed as argument
 const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1', fetch });
+```
+
+## Examples
+
+### AWS
+Here are some examples of common AWS services.
+
+```ts
+// API Gateway
+const signedFetch = createSignedFetcher({ service: 'execute-api', region: 'eu-west-1' });
+const response = await signedFetch('https://myapi.execute-api.eu-west-1.amazonaws.com/my-stage/my-resource');
+
+// Lambda Function URL
+const signedFetch = createSignedFetcher({ service: 'lambda', region: 'eu-west-1' });
+const response = await signedFetch(new URL('https://mylambda.lambda-url.eu-west-1.on.aws/'));
+
+// AppSync
+const signedFetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
+const response = await signedFetch('https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql', {
+  method: 'POST',
+  body: JSON.stringify({ a: 1 }),
+  headers: {'Content-Type': 'application/json'}
+});
+```
+
+### Automatically sign GraphQL Requests with `graphql-request`
+If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch`option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
+
+```ts
+import { createSignedFetcher } from 'aws-sigv4-fetch';
+import { GraphQLClient } from 'graphql-request';
+
+const query = `
+  mutation CreateItem($input: CreateItemInput!) {
+    createItem(input: $input) {
+      id
+      createdAt
+      updatedAt
+      name
+    }
+  }
+`;
+
+const variables = {
+  input: {
+    name,
+  },
+};
+
+const client = new GraphQLClient('https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql', {
+  fetch: createSignedFetcher({ service: 'appsync', region: 'eu-west-1' }),
+});
+
+const result = await client.request(query, variables);
 ```
 
 ## Resources
