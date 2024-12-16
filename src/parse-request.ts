@@ -57,7 +57,7 @@ const copyHeaders = (headers?: HeadersInit): Record<string, string> => {
  * Input can be a `string`, `URL`, or `Request` object.
  * Init is an optional `RequestInit` object. If provided, it will override the values in the `Request` object.
  */
-export const parseRequest = (input: RequestInfo | URL, init?: RequestInit): ParsedRequest => {
+export const parseRequest = (input: string | Request | URL, init?: RequestInit): ParsedRequest => {
   let url = "";
   let request: RequestInit = {};
 

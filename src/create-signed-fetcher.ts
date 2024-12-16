@@ -31,23 +31,24 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
     const region = opts.region || "us-east-1";
     const credentials = opts.credentials || defaultProvider();
 
-    const { url, ...request } = parseRequest(input, init);
+    const parsedRequest = parseRequest(input, init);
+    const parsedUrl = parsedRequest.url;
 
     // host is required by AWS Signature V4: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-    request.headers["host"] = url.host;
+    parsedRequest.headers["host"] = parsedUrl.host;
 
     const httpRequest = new HttpRequest({
-      method: request.method,
-      body: request.body,
-      headers: request.headers,
-      hostname: url.hostname,
-      path: url.pathname,
-      protocol: url.protocol,
-      port: url.port ? Number(url.port) : undefined,
-      username: url.username,
-      password: url.password,
-      fragment: url.hash,
-      query: Object.fromEntries(url.searchParams.entries()),
+      method: parsedRequest.method,
+      body: parsedRequest.body,
+      headers: parsedRequest.headers,
+      hostname: parsedUrl.hostname,
+      path: parsedUrl.pathname,
+      protocol: parsedUrl.protocol,
+      port: parsedUrl.port ? Number(parsedUrl.port) : undefined,
+      username: parsedUrl.username,
+      password: parsedUrl.password,
+      fragment: parsedUrl.hash,
+      query: Object.fromEntries(parsedUrl.searchParams.entries()),
     });
 
     const signer = new SignatureV4({
@@ -60,8 +61,8 @@ export const createSignedFetcher: CreateSignedFetcher = (opts: SignedFetcherOpti
     const signedHttpRequest = await signer.sign(httpRequest);
 
     // Copy only the signed headers, because the body may be modified by the signer
-    request.headers = signedHttpRequest.headers;
+    parsedRequest.headers = signedHttpRequest.headers;
 
-    return fetchFn(url, request);
+    return fetchFn(parsedUrl, parsedRequest);
   };
 };
