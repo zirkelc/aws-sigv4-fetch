@@ -13,7 +13,7 @@ import {
 } from "@aws-sdk/client-api-gateway";
 import "cross-fetch/polyfill";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../src/index.js";
+import { createSignedFetcher, signRequest } from "../../src/index.js";
 
 const SERVICE = "execute-api";
 const REGION = "us-east-1";

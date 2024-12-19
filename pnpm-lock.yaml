@@ -38,7 +38,7 @@ importers:
         version: 22.9.0
       '@vitest/coverage-v8':
         specifier: ^2.0.4
-        version: 2.0.5(vitest@2.0.5(@types/node@22.9.0)(@vitest/ui@2.0.5))
+        version: 2.0.5(vitest@2.0.5)
       '@vitest/ui':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5)
@@ -60,12 +60,18 @@ importers:
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
+      undici:
+        specifier: ^7.1.0
+        version: 7.1.0
+      undici-types:
+        specifier: ^7.1.0
+        version: 7.1.0
       vitest:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@22.9.0)(@vitest/ui@2.0.5)
       vitest-github-actions-reporter:
         specifier: ^0.11.1
-        version: 0.11.1(vitest@2.0.5(@types/node@22.9.0)(@vitest/ui@2.0.5))
+        version: 0.11.1(vitest@2.0.5)
 
   test/aws-api-gateway:
     dependencies:
@@ -3267,6 +3273,9 @@ packages:
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
+  undici-types@7.1.0:
+    resolution: {integrity: sha512-IdycojzhJm9g7sblozLpNkyPG2dJ7bsrpfc4hq2QKrnwbDK+ebiGL3UFSwq6B3IzB3R0m3u1b4in3hrZtMnm8g==}
+
   undici@5.28.4:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
     engines: {node: '>=14.0'}
@@ -3274,6 +3283,10 @@ packages:
   undici@6.20.1:
     resolution: {integrity: sha512-AjQF1QsmqfJys+LXfGTNum+qw4S88CojRInG/6t31W/1fk6G59s92bnAvGz5Cmur+kQv2SURXEvvudLmbrE8QA==}
     engines: {node: '>=18.17'}
+
+  undici@7.1.0:
+    resolution: {integrity: sha512-3+mdX2R31khuLCm2mKExSlMdJsfol7bJkIMH80tdXA74W34rT1jKemUTlYR7WY3TqsV4wfOgpatWmmB2Jl1+5g==}
+    engines: {node: '>=20.18.1'}
 
   unicode-emoji-modifier-base@1.0.0:
     resolution: {integrity: sha512-yLSH4py7oFH3oG/9K+XWrz1pSi3dfUrWEnInbxMfArOfc1+33BlGPQtLsOYwvdMy11AwUBetYuaRxSPqgkq+8g==}
@@ -5584,7 +5597,7 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
-  '@vitest/coverage-v8@2.0.5(vitest@2.0.5(@types/node@22.9.0)(@vitest/ui@2.0.5))':
+  '@vitest/coverage-v8@2.0.5(vitest@2.0.5)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -7398,11 +7411,15 @@ snapshots:
 
   undici-types@6.19.8: {}
 
+  undici-types@7.1.0: {}
+
   undici@5.28.4:
     dependencies:
       '@fastify/busboy': 2.1.1
 
   undici@6.20.1: {}
+
+  undici@7.1.0: {}
 
   unicode-emoji-modifier-base@1.0.0: {}
 
@@ -7471,7 +7488,7 @@ snapshots:
       '@types/node': 22.9.0
       fsevents: 2.3.3
 
-  vitest-github-actions-reporter@0.11.1(vitest@2.0.5(@types/node@22.9.0)(@vitest/ui@2.0.5)):
+  vitest-github-actions-reporter@0.11.1(vitest@2.0.5):
     dependencies:
       '@actions/core': 1.10.1
       vitest: 2.0.5(@types/node@22.9.0)(@vitest/ui@2.0.5)
