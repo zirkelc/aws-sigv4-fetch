@@ -1,10 +1,10 @@
 declare global {
   interface RequestInit {
-    duplex?: "half" | string;
+    duplex?: "half";
   }
 
   interface Request {
-    duplex?: "half" | string;
+    duplex?: "half";
   }
 }
 
