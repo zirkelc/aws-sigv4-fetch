@@ -155,7 +155,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual(body);
+
+        const text = await signedRequest.text();
+        expect(text).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
@@ -171,7 +173,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual(body);
+
+        const text = await signedRequest.text();
+        expect(text).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
@@ -185,12 +189,14 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual(body);
+
+        const text = await signedRequest.text();
+        expect(text).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=56782e0c3a9638fb8deed0a8c0cee829174b2b250ea1d41780e8b806dd172689",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=3669d63039ee68092095433425d2cebeac18afe80260a4b2f983694647e87a66",
         );
       });
     });
@@ -203,7 +209,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual(body.toString());
+
+        const text = await signedRequest.text();
+        expect(text).toEqual(body.toString());
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersUnsignedPayload);
@@ -217,7 +225,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual(body.toString());
+
+        const text = await signedRequest.text();
+        expect(text).toEqual(body.toString());
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersUnsignedPayload);
@@ -231,12 +241,14 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual(body.toString());
+
+        const text = await signedRequest.text();
+        expect(text).toEqual(body.toString());
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=075da87c82aa0aefd095333a7a662e80512a26775a0cf193856ad9e63ddc64cb",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a2b8d86879c46ff096f7b7d021a410fe09697269f0630ac31bdd7640e62d4bdb",
         );
       });
     });
@@ -248,7 +260,7 @@ describe("signRequest", () => {
       /**
        * Undici generates a random boundary for each request.
        */
-      const formData = {
+      const serializedFormData = {
         headers: {
           "Content-Type": "multipart/form-data; boundary=----formdata-undici-0.6204674738279623",
         },
@@ -261,11 +273,13 @@ describe("signRequest", () => {
       };
 
       it("should fetch with string", async () => {
-        const signedRequest = await signRequest(url, { method: "POST", ...formData }, options);
+        const signedRequest = await signRequest(url, { method: "POST", ...serializedFormData }, options);
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.formData()).toEqual(body);
+
+        const formData = await signedRequest.formData();
+        expect(formData).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
@@ -275,11 +289,13 @@ describe("signRequest", () => {
       });
 
       it("should fetch with URL", async () => {
-        const signedRequest = await signRequest(new URL(url), { method: "POST", ...formData }, options);
+        const signedRequest = await signRequest(new URL(url), { method: "POST", ...serializedFormData }, options);
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.formData()).toEqual(body);
+
+        const formData = await signedRequest.formData();
+        expect(formData).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
@@ -289,16 +305,18 @@ describe("signRequest", () => {
       });
 
       it("should fetch with Request", async () => {
-        const signedRequest = await signRequest(new Request(url, { method: "POST", ...formData }), options);
+        const signedRequest = await signRequest(new Request(url, { method: "POST", ...serializedFormData }), options);
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.formData()).toEqual(body);
+
+        const formData = await signedRequest.formData();
+        expect(formData).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=ae0efdc0fc4135f3ff9658b87a5b6c014c93b6a453ce6c1647d67753d193243e",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=49b9a46b57b6877323d917ebc6fa3ff0c521d9a3a512f3419ae35ded4f8f58a2",
         );
       });
     });
@@ -311,7 +329,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.blob()).toEqual(body);
+
+        const blob = await signedRequest.blob();
+        expect(blob).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersUnsignedPayload);
@@ -325,7 +345,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.blob()).toEqual(body);
+
+        const blob = await signedRequest.blob();
+        expect(blob).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersUnsignedPayload);
@@ -339,13 +361,15 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(await signedRequest.text()).toEqual("foo");
+
+        const blob = await signedRequest.blob();
+        expect(blob).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
 
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=8f417353b5397f12b5838c417d36070ddb38a6e37b7ed06f025ad53c908b7420",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=5cee677704af2119be87adfacf459bf03081418a4badb22c91bd37bba8d2bf90",
         );
       });
     });
@@ -358,7 +382,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(new Uint8Array(await signedRequest.arrayBuffer())).toEqual(body);
+
+        const arrayBuffer = await signedRequest.arrayBuffer();
+        expect(new Uint8Array(arrayBuffer)).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
@@ -372,7 +398,9 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(new Uint8Array(await signedRequest.arrayBuffer())).toEqual(body);
+
+        const arrayBuffer = await signedRequest.arrayBuffer();
+        expect(new Uint8Array(arrayBuffer)).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
@@ -386,13 +414,15 @@ describe("signRequest", () => {
 
         expect(signedRequest.url).toEqual(url);
         expect(signedRequest.method).toEqual("POST");
-        expect(new Uint8Array(await signedRequest.arrayBuffer())).toEqual(body);
+
+        const arrayBuffer = await signedRequest.arrayBuffer();
+        expect(new Uint8Array(arrayBuffer)).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
 
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2d17bf1aa1624819549626389790503937599b27a998286e0e190b897b1467dd",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=89f092f52faedb8a6be1890b2a511b88e7998389d62bd7d72915e2f4ee271a64",
         );
       });
     });

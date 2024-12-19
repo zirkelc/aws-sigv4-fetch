@@ -97,7 +97,7 @@ jobs:
         run: pnpm build
 
       - name: Publish Preview
-        run: npx pkg-pr-new publish
+        run: npx pkg-pr-new publish --pnpm --packageManager=pnpm
 
   release:
     name: Release
