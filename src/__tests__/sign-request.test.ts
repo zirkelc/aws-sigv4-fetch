@@ -164,7 +164,7 @@ describe("signRequest", () => {
 
         const authorization = signedHeaders.authorization;
         expect(authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=cf22a0befff359388f136b158f0b1b43db7b18d2ca65ce4112bc88a16815c4b6",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=3669d63039ee68092095433425d2cebeac18afe80260a4b2f983694647e87a66",
         );
       });
 
@@ -180,7 +180,7 @@ describe("signRequest", () => {
         const signedHeaders = getSignedHeaders(signedRequest);
         expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=cf22a0befff359388f136b158f0b1b43db7b18d2ca65ce4112bc88a16815c4b6",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=3669d63039ee68092095433425d2cebeac18afe80260a4b2f983694647e87a66",
         );
       });
 
@@ -214,9 +214,9 @@ describe("signRequest", () => {
         expect(text).toEqual(body.toString());
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2d17bf1aa1624819549626389790503937599b27a998286e0e190b897b1467dd",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a2b8d86879c46ff096f7b7d021a410fe09697269f0630ac31bdd7640e62d4bdb",
         );
       });
 
@@ -230,9 +230,9 @@ describe("signRequest", () => {
         expect(text).toEqual(body.toString());
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2d17bf1aa1624819549626389790503937599b27a998286e0e190b897b1467dd",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a2b8d86879c46ff096f7b7d021a410fe09697269f0630ac31bdd7640e62d4bdb",
         );
       });
 
@@ -334,9 +334,9 @@ describe("signRequest", () => {
         expect(blob).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2d17bf1aa1624819549626389790503937599b27a998286e0e190b897b1467dd",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=5cee677704af2119be87adfacf459bf03081418a4badb22c91bd37bba8d2bf90",
         );
       });
 
@@ -350,9 +350,9 @@ describe("signRequest", () => {
         expect(blob).toEqual(body);
 
         const signedHeaders = getSignedHeaders(signedRequest);
-        expect(signedHeaders).toEqual(headersUnsignedPayload);
+        expect(signedHeaders).toEqual(headersSigned);
         expect(signedHeaders.authorization).toBe(
-          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=2d17bf1aa1624819549626389790503937599b27a998286e0e190b897b1467dd",
+          "AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=5cee677704af2119be87adfacf459bf03081418a4badb22c91bd37bba8d2bf90",
         );
       });
 
