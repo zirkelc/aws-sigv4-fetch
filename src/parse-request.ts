@@ -1,13 +1,3 @@
-declare global {
-  interface RequestInit {
-    duplex?: "half";
-  }
-
-  interface Request {
-    duplex?: "half";
-  }
-}
-
 interface ParsedRequest {
   url: URL;
   method: string;
@@ -17,14 +7,6 @@ interface ParsedRequest {
 
 const isObject = (input: unknown): input is Record<string, unknown> => {
   return typeof input === "object" && input !== null;
-};
-
-const isRequest = (input: unknown): input is Request => {
-  if (input instanceof Request) return true;
-
-  if (isObject(input) && "body" in input && "method" in input && "url" in input) return true;
-
-  return false;
 };
 
 const isHeaders = (input: unknown): input is Headers => {
@@ -37,6 +19,7 @@ const isHeaders = (input: unknown): input is Headers => {
 
 /**
  * Copy the properties of `HeadersInit` to a plain object.
+ * Lowercase the keys of the headers.
  * `HeadersInit` is a union of `[string, string][]`, `Record<string, string>`, and `Headers`
  */
 export const copyHeaders = (headers?: HeadersInit): Record<string, string> => {
