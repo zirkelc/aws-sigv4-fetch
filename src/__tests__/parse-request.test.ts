@@ -109,31 +109,6 @@ describe("parseRequest", () => {
     });
   });
 
-  describe("Node.js options ", () => {
-    it("should keep duplex from `Request`", async () => {
-      // Arrange
-      const input = new Request(url, { method: "POST", body: "foo", duplex: "half" });
-
-      // Act
-      const parsed = await parseRequest(input);
-
-      // Assert
-      expect(parsed.duplex).toEqual("half");
-    });
-
-    it("should keep duplex from `RequestInit`", async () => {
-      // Arrange
-      const input = new Request(url, { method: "POST", body: "foo" });
-      const init = { duplex: "half" };
-
-      // Act
-      const parsed = await parseRequest(input, init);
-
-      // Assert
-      expect(parsed.duplex).toEqual("half");
-    });
-  });
-
   describe("headers", () => {
     it("should parse `Headers` to plain object", async () => {
       // Arrange

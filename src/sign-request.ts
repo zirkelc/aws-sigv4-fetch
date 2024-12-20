@@ -35,19 +35,19 @@ export async function signRequest(
     options = args[2];
   }
 
-  const { url, ...request } = await parseRequest(input, init);
+  const { url, method, headers, body } = await parseRequest(input, init);
 
   // host is required by AWS Signature V4: https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-  request.headers["host"] = url.host;
+  headers["host"] = url.host;
 
   const service = options.service;
   const region = options.region || "us-east-1";
   const credentials = options.credentials || defaultProvider();
 
   const httpRequest = new HttpRequest({
-    method: request.method,
-    body: request.body,
-    headers: request.headers,
+    method,
+    body,
+    headers,
     hostname: url.hostname,
     path: url.pathname,
     protocol: url.protocol,
@@ -67,5 +67,6 @@ export async function signRequest(
 
   const { headers: signedHeaders } = await signer.sign(httpRequest);
 
-  return new Request(url, { ...request, headers: signedHeaders });
+  // Create a new request with the signed headers
+  return new Request(input, { ...init, headers: signedHeaders });
 }

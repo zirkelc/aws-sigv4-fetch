@@ -8,9 +8,11 @@ declare global {
   }
 }
 
-interface ParsedRequest extends RequestInit {
+interface ParsedRequest {
   url: URL;
+  method: string;
   headers: Record<string, string>;
+  body?: ArrayBuffer;
 }
 
 const isObject = (input: unknown): input is Record<string, unknown> => {
@@ -67,27 +69,20 @@ export const parseRequest = async (input: string | Request | URL, init?: Request
     const url = input instanceof URL ? input.href : input;
     request = new Request(url, init);
   } else {
-    request = new Request(input, init);
+    // Creating a request from a request object will consume the body
+    // Clone the request to keep the original request intact
+    request = new Request(input.clone(), init);
   }
 
   const method = request.method.toUpperCase();
   const url = new URL(request.url);
   const headers = copyHeaders(request.headers);
-  const body = request.body ? await request.clone().arrayBuffer() : undefined;
+  const body = request.body ? await request.arrayBuffer() : undefined;
 
   return {
     method,
     headers,
     url,
     body,
-    credentials: request.credentials,
-    cache: request.cache,
-    mode: request.mode,
-    redirect: request.redirect,
-    referrer: request.referrer,
-    referrerPolicy: request.referrerPolicy,
-    integrity: request.integrity,
-    signal: request.signal,
-    duplex: request.duplex,
   };
 };
