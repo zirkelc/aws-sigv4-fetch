@@ -1,70 +1,51 @@
-import type { AwsCredentialIdentity } from "@aws-sdk/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createSignedFetcher } from "../create-signed-fetcher.js";
+import { type SignedFetcherOptions, createSignedFetcher } from "../create-signed-fetcher.js";
+import {
+  url,
+  bodyFixture,
+  credentials,
+  date,
+  getSignedHeaders,
+  headersSigned,
+  region,
+  service,
+} from "./__fixtures__.js";
 
 const fetchMock = vi.fn(fetch);
 let signedFetch: typeof fetch;
 
 vi.useFakeTimers();
-vi.setSystemTime("2024-01-01T00:00:00.000Z");
+vi.setSystemTime(date);
 
-const credentials: AwsCredentialIdentity = {
-  accessKeyId: "dummyAccessKeyId",
-  secretAccessKey: "dummySecretAccessKey",
-  sessionToken: "dummySessionToken",
+const options: SignedFetcherOptions = {
+  service,
+  region,
+  credentials,
+  fetch: fetchMock,
 };
 
 beforeEach(() => {
   vi.resetAllMocks();
 
-  signedFetch = createSignedFetcher({
-    service: "dummyService",
-    region: "dummyRegion",
-    credentials,
-    fetch: fetchMock,
-  });
-});
-
-const url = "http://example.com/foo?bar=baz#qux";
-
-const headersSigned = expect.objectContaining({
-  host: "example.com",
-  "x-amz-date": expect.stringMatching(/\d{8}T\d{6}Z/),
-  "x-amz-security-token": "dummySessionToken",
-  "x-amz-content-sha256": expect.stringMatching(/^[a-f0-9]{64}$/),
-  authorization: expect.stringMatching(
-    /AWS4-HMAC-SHA256 Credential=([a-zA-Z0-9]+)\/(\d{8})\/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)\/aws4_request, SignedHeaders=([a-zA-Z0-9;-]+), Signature=([a-fA-F0-9]{64})/,
-  ),
-});
-
-const headersUnsignedPayload = expect.objectContaining({
-  host: "example.com",
-  "x-amz-date": expect.stringMatching(/\d{8}T\d{6}Z/),
-  "x-amz-security-token": "dummySessionToken",
-  "x-amz-content-sha256": "UNSIGNED-PAYLOAD",
-  authorization: expect.stringMatching(
-    /AWS4-HMAC-SHA256 Credential=([a-zA-Z0-9]+)\/(\d{8})\/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)\/aws4_request, SignedHeaders=([a-zA-Z0-9;-]+), Signature=([a-fA-F0-9]{64})/,
-  ),
+  signedFetch = createSignedFetcher(options);
 });
 
 describe("createSignedFetcher", () => {
   describe("GET", () => {
-    const expectedMethod = "GET";
-
     it("should fetch with string", async () => {
       await signedFetch(url);
 
       expect(fetchMock).toHaveBeenCalled();
-      const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+      const [request] = fetchMock.mock.calls[0] as [Request];
 
-      expect(fetchUrl).toEqual(new URL(url));
-      expect(fetchInit?.method).toEqual(expectedMethod);
-      expect(fetchInit?.body).toEqual(undefined);
-      expect(fetchInit?.headers).toEqual(headersSigned);
+      expect(request.url).toEqual(url);
+      expect(request.method).toEqual("GET");
+      expect(request.body).toEqual(null);
 
-      const authorization = fetchInit?.headers?.["authorization"];
-      expect(authorization).toMatchInlineSnapshot(
-        `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=87967143809950c291d1539ed6a88fa6eb19cddbacfdae416db867d73e8fc08b"`,
+      const signedHeaders = getSignedHeaders(request);
+      expect(signedHeaders).toEqual(headersSigned);
+      expect(signedHeaders.authorization).toMatchInlineSnapshot(
+        `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=aa773e14e7b0ff9b9c7434ba0fd3b91e16a7707f95875e96ff387c1f4c7094e7"`,
       );
     });
 
@@ -72,16 +53,16 @@ describe("createSignedFetcher", () => {
       await signedFetch(new URL(url));
 
       expect(fetchMock).toHaveBeenCalled();
-      const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+      const [request] = fetchMock.mock.calls[0] as [Request];
 
-      expect(fetchUrl).toEqual(new URL(url));
-      expect(fetchInit?.method).toEqual(expectedMethod);
-      expect(fetchInit?.body).toEqual(undefined);
-      expect(fetchInit?.headers).toEqual(headersSigned);
+      expect(request.url).toEqual(url);
+      expect(request.method).toEqual("GET");
+      expect(request.body).toEqual(null);
 
-      const authorization = fetchInit?.headers?.["authorization"];
-      expect(authorization).toMatchInlineSnapshot(
-        `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=87967143809950c291d1539ed6a88fa6eb19cddbacfdae416db867d73e8fc08b"`,
+      const signedHeaders = getSignedHeaders(request);
+      expect(signedHeaders).toEqual(headersSigned);
+      expect(signedHeaders.authorization).toMatchInlineSnapshot(
+        `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=aa773e14e7b0ff9b9c7434ba0fd3b91e16a7707f95875e96ff387c1f4c7094e7"`,
       );
     });
 
@@ -89,33 +70,16 @@ describe("createSignedFetcher", () => {
       await signedFetch(new Request(url));
 
       expect(fetchMock).toHaveBeenCalled();
-      const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+      const [request] = fetchMock.mock.calls[0] as [Request];
 
-      expect(fetchUrl).toEqual(new URL(url));
-      expect(fetchInit?.method).toEqual(expectedMethod);
-      expect(fetchInit?.body).toEqual(null);
-      expect(fetchInit?.headers).toEqual(headersSigned);
+      expect(request.url).toEqual(url);
+      expect(request.method).toEqual("GET");
+      expect(request.body).toEqual(null);
 
-      const authorization = fetchInit?.headers?.["authorization"];
-      expect(authorization).toMatchInlineSnapshot(
-        `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=87967143809950c291d1539ed6a88fa6eb19cddbacfdae416db867d73e8fc08b"`,
-      );
-    });
-
-    it("should fetch with Request and options", async () => {
-      await signedFetch(new Request(url));
-
-      expect(fetchMock).toHaveBeenCalled();
-      const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
-
-      expect(fetchUrl).toEqual(new URL(url));
-      expect(fetchInit?.method).toEqual(expectedMethod);
-      expect(fetchInit?.body).toEqual(null);
-      expect(fetchInit?.headers).toEqual(headersSigned);
-
-      const authorization = fetchInit?.headers?.["authorization"];
-      expect(authorization).toMatchInlineSnapshot(
-        `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=87967143809950c291d1539ed6a88fa6eb19cddbacfdae416db867d73e8fc08b"`,
+      const signedHeaders = getSignedHeaders(request);
+      expect(signedHeaders).toEqual(headersSigned);
+      expect(signedHeaders.authorization).toMatchInlineSnapshot(
+        `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=aa773e14e7b0ff9b9c7434ba0fd3b91e16a7707f95875e96ff387c1f4c7094e7"`,
       );
     });
   });
@@ -128,16 +92,15 @@ describe("createSignedFetcher", () => {
         await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
+        expect(request.body).toEqual(null);
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersSigned);
-
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=c11bdcfcc19e3e5f3f3afdd81a8bf9456650ed6a94803142a92cd432fdacc714"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1e3b24fcfd7655c0c245d99ba7b6b5ca6174eab903ebfbda09ce457af062ad30"`,
         );
       });
 
@@ -145,16 +108,15 @@ describe("createSignedFetcher", () => {
         await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
+        expect(request.body).toEqual(null);
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersSigned);
-
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=c11bdcfcc19e3e5f3f3afdd81a8bf9456650ed6a94803142a92cd432fdacc714"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1e3b24fcfd7655c0c245d99ba7b6b5ca6174eab903ebfbda09ce457af062ad30"`,
         );
       });
 
@@ -162,37 +124,37 @@ describe("createSignedFetcher", () => {
         await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
+        expect(request.body).toEqual(null);
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(null);
-        expect(fetchInit?.headers).toEqual(headersSigned);
-
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=c11bdcfcc19e3e5f3f3afdd81a8bf9456650ed6a94803142a92cd432fdacc714"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=1e3b24fcfd7655c0c245d99ba7b6b5ca6174eab903ebfbda09ce457af062ad30"`,
         );
       });
     });
 
     describe(`Body: String("foo")`, () => {
-      const body = "foo";
+      const { body } = bodyFixture.string;
 
       it("should fetch with string", async () => {
         await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersSigned);
+        const text = await request.text();
+        expect(text).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=1c6004639bd60c69bfba7f46231d4f25423ae92a8a2746f489bed437273693dc"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=9db1a3e5ba8d56d886872466535108231480376835a70889b107abb78766af26"`,
         );
       });
 
@@ -200,16 +162,17 @@ describe("createSignedFetcher", () => {
         await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersSigned);
+        const text = await request.text();
+        expect(text).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=1c6004639bd60c69bfba7f46231d4f25423ae92a8a2746f489bed437273693dc"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=9db1a3e5ba8d56d886872466535108231480376835a70889b107abb78766af26"`,
         );
       });
 
@@ -217,37 +180,39 @@ describe("createSignedFetcher", () => {
         await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(expect.any(ReadableStream));
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const text = await request.text();
+        expect(text).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=30e1c46ef773fb1a3f82a537e15384d9601aebf38190e9ff03bdb2ff8a8c504f"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=9db1a3e5ba8d56d886872466535108231480376835a70889b107abb78766af26"`,
         );
       });
     });
 
     describe(`Body: URLSearchParams({ foo: "bar" })`, () => {
-      const body = new URLSearchParams({ foo: "bar" });
+      const { body } = bodyFixture.urlSearchParams;
 
       it("should fetch with string", async () => {
         await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const text = await request.text();
+        expect(text).toEqual(body.toString());
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a2b8d86879c46ff096f7b7d021a410fe09697269f0630ac31bdd7640e62d4bdb"`,
         );
       });
 
@@ -255,16 +220,17 @@ describe("createSignedFetcher", () => {
         await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const text = await request.text();
+        expect(text).toEqual(body.toString());
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a2b8d86879c46ff096f7b7d021a410fe09697269f0630ac31bdd7640e62d4bdb"`,
         );
       });
 
@@ -272,107 +238,97 @@ describe("createSignedFetcher", () => {
         await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(expect.any(ReadableStream));
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const text = await request.text();
+        expect(text).toEqual(body.toString());
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=783834f3cc782c06f67ca1e74af2defb2cdf7b0e3690e887f5ca6bdee72003e1"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=a2b8d86879c46ff096f7b7d021a410fe09697269f0630ac31bdd7640e62d4bdb"`,
         );
       });
     });
 
     describe(`Body: FormData({ foo: "bar" })`, () => {
-      const body = new FormData();
-      body.append("foo", "bar");
+      const { body, init } = bodyFixture.formData;
 
       it("should fetch with string", async () => {
-        await signedFetch(url, { method: "POST", body });
+        await signedFetch(url, { method: "POST", ...init });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const formData = await request.formData();
+        expect(formData).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=49b9a46b57b6877323d917ebc6fa3ff0c521d9a3a512f3419ae35ded4f8f58a2"`,
         );
       });
 
       it("should fetch with URL", async () => {
-        await signedFetch(new URL(url), { method: "POST", body });
+        await signedFetch(new URL(url), { method: "POST", ...init });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const formData = await request.formData();
+        expect(formData).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=49b9a46b57b6877323d917ebc6fa3ff0c521d9a3a512f3419ae35ded4f8f58a2"`,
         );
       });
 
       it("should fetch with Request", async () => {
-        // Copied from: https://github.com/nodejs/undici/blob/fb3138d61d652866c54ff78eb182c40fe22f1c5d/test/fetch/formdata.js#L373-L388
-        await signedFetch(
-          new Request(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "multipart/form-data; boundary=----formdata-undici-0.6204674738279623",
-            },
-            body:
-              "------formdata-undici-0.6204674738279623\r\n" +
-              'Content-Disposition: form-data; name="fiŝo"\r\n' +
-              "\r\n" +
-              "value1\r\n" +
-              "------formdata-undici-0.6204674738279623--\r\n",
-          }),
-        );
+        await signedFetch(new Request(url, { method: "POST", ...init }));
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(expect.any(ReadableStream));
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const formData = await request.formData();
+        expect(formData).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=f386b9865153ea2c54b5ece7cff7a3885419a25733e802dea5084b993c1e47d3"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=content-type;host;x-amz-content-sha256;x-amz-date, Signature=49b9a46b57b6877323d917ebc6fa3ff0c521d9a3a512f3419ae35ded4f8f58a2"`,
         );
       });
     });
 
     describe(`Body: Blob(["foo"])`, () => {
-      const body = new Blob(["foo"]);
+      const { body } = bodyFixture.blob;
 
       it("should fetch with string", async () => {
         await signedFetch(url, { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const blob = await request.blob();
+        expect(blob).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=d645977d43102b68b395bd50c040f691da79150ada63172a42becc54faa2a232"`,
         );
       });
 
@@ -380,16 +336,17 @@ describe("createSignedFetcher", () => {
         await signedFetch(new URL(url), { method: "POST", body });
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const blob = await request.blob();
+        expect(blob).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=d645977d43102b68b395bd50c040f691da79150ada63172a42becc54faa2a232"`,
         );
       });
 
@@ -397,83 +354,57 @@ describe("createSignedFetcher", () => {
         await signedFetch(new Request(url, { method: "POST", body }));
 
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        expect(fetchUrl).toEqual(new URL(url));
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(expect.any(ReadableStream));
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
+        const blob = await request.blob();
+        expect(blob).toEqual(body);
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=d645977d43102b68b395bd50c040f691da79150ada63172a42becc54faa2a232"`,
         );
       });
     });
 
     describe("Body: Uint8Array([0xde, 0xad, 0xbe, 0xef])", () => {
-      const body = new Uint8Array([0xde, 0xad, 0xbe, 0xef]);
+      const { body } = bodyFixture.arrayBuffer;
 
       it("should fetch with string", async () => {
-        // Arrange
-        const expectedUrl = new URL(url);
-
-        // Act
         await signedFetch(url, { method: "POST", body });
 
-        // Assert
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
-        expect(fetchUrl).toEqual(expectedUrl);
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersSigned);
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=f8f04362ccf0b2582c6e4fd9597578d1fcbcd831298cce0adb56adb451f4151d"`,
+        const arrayBuffer = await request.arrayBuffer();
+        expect(arrayBuffer).toEqual(new Uint8Array([0xde, 0xad, 0xbe, 0xef]).buffer);
+
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=89f092f52faedb8a6be1890b2a511b88e7998389d62bd7d72915e2f4ee271a64"`,
         );
       });
 
       it("should fetch with URL", async () => {
-        // Arrange
-        const expectedUrl = new URL(url);
-
-        // Act
         await signedFetch(new URL(url), { method: "POST", body });
 
-        // Assert
         expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
-        expect(fetchUrl).toEqual(expectedUrl);
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(body);
-        expect(fetchInit?.headers).toEqual(headersSigned);
+        const [request] = fetchMock.mock.calls[0] as [Request];
+        expect(request.url).toEqual(url);
+        expect(request.method).toEqual("POST");
 
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=f8f04362ccf0b2582c6e4fd9597578d1fcbcd831298cce0adb56adb451f4151d"`,
-        );
-      });
+        const arrayBuffer = await request.arrayBuffer();
+        expect(arrayBuffer).toEqual(new Uint8Array([0xde, 0xad, 0xbe, 0xef]).buffer);
 
-      it("should fetch with Request", async () => {
-        // Arrange
-        const expectedUrl = new URL(url);
-
-        // Act
-        await signedFetch(new Request(url, { method: "POST", body }));
-
-        // Assert
-        expect(fetchMock).toHaveBeenCalled();
-        const [fetchUrl, fetchInit] = fetchMock.mock.calls[0];
-        expect(fetchUrl).toEqual(expectedUrl);
-        expect(fetchInit?.method).toEqual("POST");
-        expect(fetchInit?.body).toEqual(expect.any(ReadableStream));
-        expect(fetchInit?.headers).toEqual(headersUnsignedPayload);
-
-        const authorization = fetchInit?.headers?.["authorization"];
-        expect(authorization).toMatchInlineSnapshot(
-          `"AWS4-HMAC-SHA256 Credential=dummyAccessKeyId/20240101/dummyRegion/dummyService/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=8edb7328e32484357649bb350b9c9d8b95d18c041fc7098ace02a3ab574afc8d"`,
+        const signedHeaders = getSignedHeaders(request);
+        expect(signedHeaders).toEqual(headersSigned);
+        expect(signedHeaders.authorization).toMatchInlineSnapshot(
+          `"AWS4-HMAC-SHA256 Credential=foo/20000101/us-bar-1/foo/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=89f092f52faedb8a6be1890b2a511b88e7998389d62bd7d72915e2f4ee271a64"`,
         );
       });
     });
