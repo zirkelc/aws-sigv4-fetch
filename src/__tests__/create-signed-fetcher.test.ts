@@ -1,15 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type SignedFetcherOptions, createSignedFetcher } from "../create-signed-fetcher.js";
-import {
-  url,
-  bodyFixture,
-  credentials,
-  date,
-  getSignedHeaders,
-  headersSigned,
-  region,
-  service,
-} from "./__fixtures__.js";
+import { url, bodyFixture, credentials, date, getSignedHeaders, headersSigned, region, service } from "./fixtures.js";
 
 const fetchMock = vi.fn(fetch);
 let signedFetch: typeof fetch;

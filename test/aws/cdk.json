@@ -1,0 +1,3 @@
+{
+  "app": "pnpm tsx bin/app.ts"
+}

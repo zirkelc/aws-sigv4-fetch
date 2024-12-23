@@ -1,15 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type SignRequestOptions, signRequest } from "../sign-request.js";
-import {
-  url,
-  bodyFixture,
-  credentials,
-  date,
-  getSignedHeaders,
-  headersSigned,
-  region,
-  service,
-} from "./__fixtures__.js";
+import { url, bodyFixture, credentials, date, getSignedHeaders, headersSigned, region, service } from "./fixtures.js";
 
 declare global {
   interface RequestInit {

@@ -1,6 +1,0 @@
-{
-  "type": "commonjs",
-  "scripts": {
-    "test": "vitest"
-  }
-}

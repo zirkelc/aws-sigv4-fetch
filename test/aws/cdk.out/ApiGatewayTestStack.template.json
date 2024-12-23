@@ -1,0 +1,402 @@
+{
+ "Resources": {
+  "TestApi65B47ECD": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "aws-sigv4: Mock REST API for testing with IAM authentication",
+    "Name": "aws-sigv4"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Resource"
+   }
+  },
+  "TestApiCloudWatchRole3E85D09F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/CloudWatchRole/Resource"
+   }
+  },
+  "TestApiAccountC79E0025": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "TestApiCloudWatchRole3E85D09F",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "TestApi65B47ECD"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Account"
+   }
+  },
+  "TestApiDeployment8541C0A034285c41b2e2a9ffd37326d5c4863769": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "aws-sigv4: Mock REST API for testing with IAM authentication",
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "DependsOn": [
+    "TestApimockproxyANY87BC953B",
+    "TestApimockproxyGETF68ED219",
+    "TestApimockproxyPOST6F4DF186",
+    "TestApimockproxy2803C5CA",
+    "TestApimockGET7CA8EEFA",
+    "TestApimockPOST18559635",
+    "TestApimock814A72D1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Deployment/Resource"
+   }
+  },
+  "TestApiDeploymentStagetest2648D805": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "TestApiDeployment8541C0A034285c41b2e2a9ffd37326d5c4863769"
+    },
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    },
+    "StageName": "test"
+   },
+   "DependsOn": [
+    "TestApiAccountC79E0025"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/DeploymentStage.test/Resource"
+   }
+  },
+  "TestApimock814A72D1": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "TestApi65B47ECD",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "mock",
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/Resource"
+   }
+  },
+  "TestApimockproxy2803C5CA": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "TestApimock814A72D1"
+    },
+    "PathPart": "{proxy+}",
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/Resource"
+   }
+  },
+  "TestApimockproxyANY87BC953B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "Type": "MOCK"
+    },
+    "ResourceId": {
+     "Ref": "TestApimockproxy2803C5CA"
+    },
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/ANY/Resource"
+   }
+  },
+  "TestApimockproxyGETF68ED219": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "AWS_IAM",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseTemplates": {
+        "application/json": "{\"foo\":\"bar\"}"
+       },
+       "StatusCode": "200"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{\"statusCode\": 200}"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseModels": {
+       "application/json": "Empty"
+      },
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TestApimockproxy2803C5CA"
+    },
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/GET/Resource"
+   }
+  },
+  "TestApimockproxyPOST6F4DF186": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "AWS_IAM",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseTemplates": {
+        "application/json": "{\"foo\":\"bar\"}"
+       },
+       "StatusCode": "200"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{\"statusCode\": 200}"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseModels": {
+       "application/json": "Empty"
+      },
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TestApimockproxy2803C5CA"
+    },
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/POST/Resource"
+   }
+  },
+  "TestApimockGET7CA8EEFA": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "AWS_IAM",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseTemplates": {
+        "application/json": "{\"foo\":\"bar\"}"
+       },
+       "StatusCode": "200"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{\"statusCode\": 200}"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseModels": {
+       "application/json": "Empty"
+      },
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TestApimock814A72D1"
+    },
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/GET/Resource"
+   }
+  },
+  "TestApimockPOST18559635": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "AWS_IAM",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseTemplates": {
+        "application/json": "{\"foo\":\"bar\"}"
+       },
+       "StatusCode": "200"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{\"statusCode\": 200}"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseModels": {
+       "application/json": "Empty"
+      },
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TestApimock814A72D1"
+    },
+    "RestApiId": {
+     "Ref": "TestApi65B47ECD"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/TestApi/Default/mock/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WMyw6CMBBFv4V9GQUWrlG3RgMfYMYyYnm0hE5FQvh3Q2oUV3POzZ0bQ7RLIA5wsKEs6rBRN5hyRlkLHOx1wk6VyDTgCFNGltNOicNdrzCV0jjN4khdY8aWNC/pynLGkpbMQ0bWuF7SHu1PPpueL715jV87ET9MsRQ8zUJhC1NmGv9lGprnv6Gz487xenIW2hQEld084y1ECURBZZUKe6dZtQSZv28BnB8ZDQEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ApiGatewayTestStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "TestApiEndpoint316CA9C6": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TestApi65B47ECD"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TestApiDeploymentStagetest2648D805"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "API Gateway URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TestApi65B47ECD"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TestApiDeploymentStagetest2648D805"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
