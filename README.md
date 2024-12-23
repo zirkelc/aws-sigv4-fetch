@@ -53,8 +53,28 @@ const response = await signedFetch('https://s3.eu-west-1.amazonaws.com/my-bucket
 });
 ```
 
+## API
+The `createSignedFetcher(options: SignedFetcherOptions)` function accepts the following options:
+
+```ts
+type SignedFetcherOptions = {
+  service: string;
+  region?: string;
+  credentials?: AwsCredentialIdentity;
+  fetch?: typeof fetch;
+};
+```
+
+### Service
+The `service` is required and must match the AWS service you are signing requests for.
+If it doesn't match, the request will fail with an error like:
+> Credential should be scoped to correct service: 'service'
+
+### Region
+The `region` is optional and defaults to `us-east-1` if not provided. Some services like IAM are global and don't require a region.
+
 ### Credentials
-Signing requests with AWS Signature V4 requires credentials (access key ID and secret access key). The `createSignedFetcher` function accepts an optional `credentials` option. If not provided, the credentials will be retrieved from the environment by the package [`@aws-sdk/credential-provider-node`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_credential_provider_node.html).
+The `credentials` is optional. If not provided, the credentials will be retrieved from the environment by the package [`@aws-sdk/credential-provider-node`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_credential_provider_node.html).
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
@@ -67,7 +87,7 @@ const signedFetch = createSignedFetcher({ service: 's3', region: 'eu-west-1', cr
 ```
 
 ### Fetch
-By default, `createSignedFetcher` uses the `fetch` function from the environment. Native `fetch` is supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application. There are several ways to do this:
+The `fetch` function is optional. If not provided, the `fetch` function from the environment will be used. Native `fetch` is supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application. There are several ways to do this:
 
 #### Native `fetch`
 If native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.
@@ -125,7 +145,7 @@ const response = await signedFetch('https://mygraphqlapi.appsync-api.eu-west-1.a
 ```
 
 ### Automatically sign GraphQL Requests with `graphql-request`
-If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch`option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
+If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch` option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
