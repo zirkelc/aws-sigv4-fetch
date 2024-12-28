@@ -1,7 +1,7 @@
 import "cross-fetch/polyfill";
 import { describe, expect, it } from "vitest";
-import { parseRequest } from "../parse-request.js";
-import { url } from "./fixtures.js";
+import { url } from "./__fixtures__.js";
+import { parseRequest } from "./parse-request.js";
 
 describe("parseRequest", () => {
   describe("string input", () => {

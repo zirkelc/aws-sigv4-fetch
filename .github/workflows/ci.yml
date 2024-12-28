@@ -54,7 +54,7 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: pnpm test
+        run: pnpm test:unit
 
       - name: Coverage
         if: ${{ steps.install.conclusion == 'success' }}
@@ -72,10 +72,6 @@ jobs:
       - name: Setup and Install
         id: install
         uses: zirkelc/setup-and-install@v1
-
-      - name: Deploy
-        working-directory: test
-        run: pnpm run deploy
 
       - name: Test
         run: pnpm test:e2e

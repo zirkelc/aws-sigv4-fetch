@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getFetchFn } from "../get-fetch.js";
+import { getFetchFn } from "./get-fetch.js";
 
 describe("getFetchFn", () => {
   // Set up a global fetch mock
