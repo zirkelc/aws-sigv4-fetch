@@ -95,7 +95,7 @@ jobs:
 
       - name: Deploy
         working-directory: test/aws
-        run: pnpm deploy
+        run: pnpm run deploy
 
       - name: Test
         run: pnpm test:e2e
