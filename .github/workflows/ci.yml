@@ -71,7 +71,7 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: pnpm test:unit
+        run: pnpm test:unit --coverage
 
       - name: Coverage
         if: ${{ steps.install.conclusion == 'success' }}

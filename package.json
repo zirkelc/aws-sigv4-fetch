@@ -26,7 +26,7 @@
     "dist"
   ],
   "scripts": {
-    "test:unit": "vitest --project=unit --coverage",
+    "test:unit": "vitest --project=unit",
     "test:e2e": "vitest --project=e2e/*",
     "build": "tsup && attw --pack .",
     "dev": "tsup ./src/index.ts --watch",
