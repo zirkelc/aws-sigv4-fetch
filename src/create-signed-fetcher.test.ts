@@ -409,4 +409,37 @@ describe("createSignedFetcher", () => {
       });
     });
   });
+
+  it("should fetch with additional headers", async () => {
+    await signedFetch(url, {
+      headers: {
+        "x-amz-test-header": "test-value",
+        "x-api-key": "test-api-key",
+      },
+    });
+
+    expect(fetchMock).toHaveBeenCalled();
+    const [request] = fetchMock.mock.calls[0] as [Request];
+
+    expect(request.url).toEqual(url);
+    expect(request.method).toEqual("GET");
+    expect(request.body).toEqual(null);
+    expect(request.headers.get("x-amz-test-header")).toEqual("test-value");
+    expect(request.headers.get("x-api-key")).toEqual("test-api-key");
+  });
+
+  it("should abort fetch", async () => {
+    const signedFetch = createSignedFetcher({ ...options, fetch });
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const response = signedFetch(url, {
+      signal,
+    });
+
+    controller.abort();
+
+    await expect(response).rejects.toThrowErrorMatchingInlineSnapshot(`[AbortError: This operation was aborted]`);
+  });
 });

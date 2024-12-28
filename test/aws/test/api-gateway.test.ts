@@ -18,12 +18,14 @@ const paths = [`/${RESOURCE}`, `/${RESOURCE}/foo`, `/${RESOURCE}/foo-*`];
 describe("APIGateway", () => {
   describe("GET", () => {
     describe.each(paths)("Path: %s", async (path) => {
+      const url = `${apiRootUrl}${path}`;
+
       it("should fetch with string", async () => {
         // Arrange
         const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
         // Act
-        const response = await signedFetch(`${apiRootUrl}${path}`, {
+        const response = await signedFetch(url, {
           method: "GET",
         });
 
@@ -34,11 +36,43 @@ describe("APIGateway", () => {
         expect(data).toEqual(RESPONSE);
       });
 
+      it("should fetch with URL", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new URL(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+
+        const data = await response.json();
+        expect(data).toEqual(RESPONSE);
+      });
+
+      it("should fetch with Request", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new Request(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+
+        const data = await response.json();
+        expect(data).toEqual(RESPONSE);
+      });
+
       it("should throw an error for unsigned fetch", async () => {
-        const response = await fetch(`${apiRootUrl}/mock`, {
+        // Arrange
+
+        // Act
+        const response = await fetch(url, {
           method: "GET",
         });
 
+        // Assert
         expect(response.status).toBe(403);
         expect(response.statusText).toBe("Forbidden");
       });
@@ -47,12 +81,14 @@ describe("APIGateway", () => {
 
   describe("POST", () => {
     describe.each(paths)("Path: %s", async (path) => {
+      const url = `${apiRootUrl}${path}`;
+
       it("should fetch with string", async () => {
         // Arrange
         const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
         // Act
-        const response = await signedFetch(`${apiRootUrl}${path}`, {
+        const response = await signedFetch(url, {
           method: "POST",
           body: JSON.stringify({}),
           headers: {
@@ -67,9 +103,47 @@ describe("APIGateway", () => {
         expect(data).toEqual(RESPONSE);
       });
 
-      it("should throw an error for unsigned fetch", async () => {
-        const response = await fetch(`${apiRootUrl}/mock`, { method: "POST" });
+      it("should fetch with URL", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
+        // Act
+        const response = await signedFetch(new URL(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+
+        const data = await response.json();
+        expect(data).toEqual(RESPONSE);
+      });
+
+      it("should fetch with Request", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new Request(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+
+        const data = await response.json();
+        expect(data).toEqual(RESPONSE);
+      });
+
+      it("should throw an error for unsigned fetch", async () => {
+        // Arrange
+
+        // Act
+        const response = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify({}),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        // Assert
         expect(response.status).toBe(403);
         expect(response.statusText).toBe("Forbidden");
       });

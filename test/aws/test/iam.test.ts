@@ -167,49 +167,6 @@ describe("IAM", () => {
       expect(data).toContain("<GetUserResult>");
     });
 
-    it("should fetch with additional headers", async () => {
-      // Arrange
-      const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
-
-      // Act
-      const response = await signedFetch(url, {
-        method: "POST",
-        body,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-          "x-amz-test-header": "test-value",
-          "x-api-key": "test-api-key",
-        },
-      });
-
-      // Assert
-      expect(response.status).toBe(200);
-
-      const data = await response.text();
-      expect(data).toContain("<GetUserResult>");
-    });
-
-    it("should abort request", async () => {
-      // Arrange
-      const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
-      const controller = new AbortController();
-      const signal = controller.signal;
-
-      // Act
-      const response = signedFetch(url, {
-        method: "POST",
-        signal,
-        body,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
-      });
-
-      controller.abort();
-
-      await expect(response).rejects.toThrow();
-    });
-
     it("should throw an error for unsigned fetch", async () => {
       // Arrange
 

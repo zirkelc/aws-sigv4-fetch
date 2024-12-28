@@ -15,12 +15,14 @@ const paths = ["", "/foo", "/foo-bar"];
 describe("Lambda Function URL", () => {
   describe("GET", () => {
     describe.each(paths)("Path: %s", (path) => {
+      const url = `${functionUrl}${path}`;
+
       it("should fetch with string", async () => {
         // Arrange
         const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
         // Act
-        const response = await signedFetch(`${functionUrl}${path}`, {
+        const response = await signedFetch(url, {
           method: "GET",
         });
 
@@ -30,11 +32,36 @@ describe("Lambda Function URL", () => {
         expect(data).toEqual(RESPONSE);
       });
 
+      it("should fetch with URL", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new URL(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+
+        const data = await response.json();
+        expect(data).toEqual(RESPONSE);
+      });
+
+      it("should fetch with Request", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new Request(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+      });
+
       it("should throw an error for unsigned fetch", async () => {
         // Arrange
 
         // Act
-        const response = await fetch(`${functionUrl}${path}`, {
+        const response = await fetch(url, {
           method: "GET",
         });
 
@@ -47,12 +74,14 @@ describe("Lambda Function URL", () => {
 
   describe("POST", () => {
     describe.each(paths)("Path: %s", (path) => {
+      const url = `${functionUrl}${path}`;
+
       it("should fetch with string", async () => {
         // Arrange
         const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
         // Act
-        const response = await signedFetch(`${functionUrl}${path}`, {
+        const response = await signedFetch(url, {
           method: "POST",
           body: JSON.stringify({}),
           headers: {
@@ -66,12 +95,38 @@ describe("Lambda Function URL", () => {
         expect(data).toEqual(RESPONSE);
       });
 
+      it("should fetch with URL", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new URL(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+      });
+
+      it("should fetch with Request", async () => {
+        // Arrange
+        const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
+
+        // Act
+        const response = await signedFetch(new Request(url));
+
+        // Assert
+        expect(response.status).toBe(200);
+      });
+
       it("should throw an error for unsigned fetch", async () => {
         // Arrange
 
         // Act
-        const response = await fetch(`${functionUrl}${path}`, {
-          method: "GET",
+        const response = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify({}),
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
         // Assert

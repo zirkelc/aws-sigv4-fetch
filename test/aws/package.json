@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "pnpm run deploy",
     "deploy": "cdk deploy --all",
     "destroy": "cdk destroy",
     "pretest": "pnpm run deploy",
