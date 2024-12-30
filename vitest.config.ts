@@ -7,7 +7,7 @@ export default defineConfig({
     include: ["src/**/*.test.{ts,js}"],
 
     // https://github.com/sapphi-red/vitest-github-actions-reporter
-    reporters: process.env.GITHUB_ACTIONS ? ["default", new GithubActionsReporter()] : ["default", "html"],
+    reporters: process.env.GITHUB_ACTIONS ? ["default", new GithubActionsReporter()] : ["default"],
 
     // https://vitest.dev/guide/coverage.html
     coverage: {
