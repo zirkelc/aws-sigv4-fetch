@@ -5,33 +5,13 @@ interface ParsedRequest {
   body?: ArrayBuffer;
 }
 
-const isObject = (input: unknown): input is Record<string, unknown> => {
-  return typeof input === "object" && input !== null;
-};
-
-const isHeaders = (input: unknown): input is Headers => {
-  if (input instanceof Headers) return true;
-
-  if (isObject(input) && "forEach" in input && "get" in input && "has" in input && "set" in input) return true;
-
-  return false;
-};
-
 /**
- * Copy the properties of `HeadersInit` to a plain object.
+ * Copy the properties of `Headers` to a plain object.
  * Lowercase the keys of the headers.
- * `HeadersInit` is a union of `[string, string][]`, `Record<string, string>`, and `Headers`
  */
-export const copyHeaders = (headers?: HeadersInit): Record<string, string> => {
+export const copyHeaders = (headers: Headers): Record<string, string> => {
   const headersMap = new Map<string, string>();
-
-  if (Array.isArray(headers)) {
-    headers.forEach((header) => headersMap.set(header[0].toLowerCase(), header[1]));
-  } else if (isHeaders(headers)) {
-    headers.forEach((value, key) => headersMap.set(key.toLowerCase(), value));
-  } else if (isObject(headers)) {
-    Object.entries(headers).forEach(([key, value]) => headersMap.set(key.toLowerCase(), value));
-  }
+  headers.forEach((value, key) => headersMap.set(key.toLowerCase(), value));
 
   return Object.fromEntries(headersMap.entries());
 };
