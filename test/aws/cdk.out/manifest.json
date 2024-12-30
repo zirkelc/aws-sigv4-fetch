@@ -1,0 +1,227 @@
+{
+  "version": "38.0.1",
+  "artifacts": {
+    "ApiGatewayTestStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "ApiGatewayTestStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "ApiGatewayTestStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-east-1",
+      "properties": {
+        "templateFile": "ApiGatewayTestStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/a3fa5648bcd67c28128e523d226652e9123e873b042dfd40ebd84c77924ffe66.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "ApiGatewayTestStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "ApiGatewayTestStack.assets"
+      ],
+      "metadata": {
+        "/ApiGatewayTestStack/TestApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApi65B47ECD"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApiCloudWatchRole3E85D09F"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApiAccountC79E0025"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApiDeployment8541C0A034285c41b2e2a9ffd37326d5c4863769"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/DeploymentStage.test/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApiDeploymentStagetest2648D805"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApiEndpoint316CA9C6"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimock814A72D1"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimockproxy2803C5CA"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/ANY/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimockproxyANY87BC953B"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimockproxyGETF68ED219"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/{proxy+}/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimockproxyPOST6F4DF186"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimockGET7CA8EEFA"
+          }
+        ],
+        "/ApiGatewayTestStack/TestApi/Default/mock/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestApimockPOST18559635"
+          }
+        ],
+        "/ApiGatewayTestStack/ApiUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiUrl"
+          }
+        ],
+        "/ApiGatewayTestStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/ApiGatewayTestStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/ApiGatewayTestStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "ApiGatewayTestStack"
+    },
+    "LambdaTestStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "LambdaTestStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "LambdaTestStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-east-1",
+      "properties": {
+        "templateFile": "LambdaTestStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/a30dfe65d7e4ee160b6c62251a997c0b25392e14e6d7ca585ef67515afc24df9.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "LambdaTestStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "LambdaTestStack.assets"
+      ],
+      "metadata": {
+        "/LambdaTestStack/TestFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestFunctionServiceRole6ABD93C7"
+          }
+        ],
+        "/LambdaTestStack/TestFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestFunction22AD90FC"
+          }
+        ],
+        "/LambdaTestStack/TestFunction/FunctionUrl/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TestFunctionFunctionUrlF8C7B1A2"
+          }
+        ],
+        "/LambdaTestStack/FunctionUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "FunctionUrl"
+          }
+        ],
+        "/LambdaTestStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/LambdaTestStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/LambdaTestStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "LambdaTestStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

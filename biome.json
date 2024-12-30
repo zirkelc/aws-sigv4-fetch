@@ -20,7 +20,8 @@
         "noForEach": "off"
       },
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        "noUnusedTemplateLiteral": "off"
       }
     }
   },

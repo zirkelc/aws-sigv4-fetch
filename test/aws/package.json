@@ -1,0 +1,20 @@
+{
+  "name": "test-aws",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "cdk deploy --all",
+    "destroy": "cdk destroy",
+    "pretest": "pnpm run deploy",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-api-gateway": "^3.535.0",
+    "@aws-sdk/client-apigatewayv2": "^3.535.0",
+    "@aws-sdk/client-lambda": "^3.716.0",
+    "aws-cdk": "^2.173.4",
+    "aws-cdk-lib": "^2.124.0",
+    "constructs": "^10.0.0",
+    "ts-node": "^10.9.2"
+  }
+}

@@ -26,12 +26,12 @@
     "dist"
   ],
   "scripts": {
-    "test": "vitest",
-    "test:coverage": "vitest --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json --coverage.reporter=text-summary --coverage.reporter=html",
+    "test:unit": "vitest --project=unit",
+    "test:e2e": "vitest --project=e2e/*",
     "build": "tsup && attw --pack .",
-    "watch": "tsup --watch src",
+    "dev": "tsup ./src/index.ts --watch",
     "prepublishOnly": "pnpm build",
-    "lint": "pnpm biome check --write --no-errors-on-unmatched src test"
+    "lint": "pnpm biome check --write --no-errors-on-unmatched ."
   },
   "repository": {
     "type": "git",
@@ -56,12 +56,15 @@
     "@types/node": "^22.9.0",
     "@vitest/coverage-v8": "^2.0.4",
     "@vitest/ui": "^2.0.5",
+    "cdk": "^2.173.2",
     "cross-fetch": "^4.0.0",
     "np": "^10.0.6",
     "pkg-pr-new": "^0.0.30",
     "tsup": "^8.1.0",
     "tsx": "^4.17.0",
     "typescript": "^5.5.3",
+    "undici": "^7.1.0",
+    "undici-types": "^7.1.0",
     "vitest": "^2.0.5",
     "vitest-github-actions-reporter": "^0.11.1"
   }

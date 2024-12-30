@@ -33,8 +33,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-  test:
-    name: Test
+  unit-test:
+    name: Unit Test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -54,7 +54,7 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: pnpm test
+        run: pnpm test:unit
 
   coverage:
     name: Coverage
@@ -71,13 +71,34 @@ jobs:
         run: pnpm build
 
       - name: Test
-        run: pnpm test:coverage
+        run: pnpm test:unit --coverage
 
       - name: Coverage
         if: ${{ steps.install.conclusion == 'success' }}
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           vite-config-path: vitest.config.unit.ts
+
+  e2e-test:
+    name: E2E Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup and Install
+        id: install
+        uses: zirkelc/setup-and-install@v1
+
+      - name: Build
+        run: pnpm build
+
+      - name: Deploy
+        working-directory: test/aws
+        run: pnpm run deploy
+
+      - name: Test
+        run: pnpm test:e2e
 
   preview:
     name: Preview
@@ -97,12 +118,12 @@ jobs:
         run: pnpm build
 
       - name: Publish Preview
-        run: npx pkg-pr-new publish
+        run: npx pkg-pr-new publish --pnpm --packageManager=pnpm
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [lint,test]
+    needs: [lint, unit-test, e2e-test]
     if: github.ref == 'refs/heads/main'
 
     steps:
