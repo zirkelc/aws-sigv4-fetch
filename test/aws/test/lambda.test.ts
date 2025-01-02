@@ -1,6 +1,6 @@
 import { GetFunctionUrlConfigCommand, LambdaClient } from "@aws-sdk/client-lambda";
+import { createSignedFetcher } from "aws-sigv4-fetch";
 import { describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
 import { FUNCTION_NAME, REGION, RESPONSE, SERVICE } from "../lib/lambda-test-stack.js";
 
 const client = new LambdaClient({ region: REGION });

@@ -1,0 +1,69 @@
+{
+  "name": "aws-sigv4-sign",
+  "version": "4.2.0",
+  "description": "SignatureV4 sign function implemented with official @aws-sdk v3",
+  "packageManager": "pnpm@9.3.0",
+  "type": "module",
+  "module": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        },
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest",
+    "build": "tsup && attw --pack .",
+    "prepublishOnly": "pnpm build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zirkelc/aws-sigv4.git",
+    "directory": "packages/aws-sigv4-sign"
+  },
+  "bugs": {
+    "url": "https://github.com/zirkelc/aws-sigv4/issues"
+  },
+  "homepage": "https://github.com/zirkelc/aws-sigv4/packages/aws-sigv4-sign#readme",
+  "license": "MIT",
+  "keywords": [
+    "aws",
+    "aws-sdk",
+    "aws-sigv4",
+    "fetch",
+    "sign",
+    "signed",
+    "signature",
+    "sigv4",
+    "signature-v4",
+    "signaturev4"
+  ],
+  "dependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/credential-provider-node": "^3.609.0",
+    "@aws-sdk/types": "^3.609.0",
+    "@smithy/protocol-http": "^4.0.3",
+    "@smithy/signature-v4": "^3.1.2"
+  }
+}

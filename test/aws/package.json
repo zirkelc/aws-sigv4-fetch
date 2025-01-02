@@ -1,5 +1,5 @@
 {
-  "name": "test-aws",
+  "name": "aws-sigv4-test-aws",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,6 +14,8 @@
     "@aws-sdk/client-lambda": "^3.716.0",
     "aws-cdk": "^2.173.4",
     "aws-cdk-lib": "^2.124.0",
+    "aws-sigv4-sign": "workspace:*",
+    "aws-sigv4-fetch": "workspace:*",
     "constructs": "^10.0.0",
     "ts-node": "^10.9.2"
   }

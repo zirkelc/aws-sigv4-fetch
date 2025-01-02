@@ -1,57 +1,25 @@
 {
-  "name": "aws-sigv4-fetch",
-  "version": "4.2.0",
-  "description": "SignatureV4 fetch implemented with official @aws-sdk v3",
+  "name": "aws-sigv4",
+  "private": true,
   "packageManager": "pnpm@9.3.0",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      },
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
-    }
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "test:unit": "vitest --project=unit",
     "test:e2e": "vitest --project=e2e/*",
-    "build": "tsup && attw --pack .",
-    "dev": "tsup ./src/index.ts --watch",
-    "prepublishOnly": "pnpm build",
-    "lint": "pnpm biome check --write --no-errors-on-unmatched ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zirkelc/aws-sigv4-fetch.git"
-  },
-  "bugs": {
-    "url": "https://github.com/zirkelc/aws-sigv4-fetch/issues"
-  },
-  "homepage": "https://github.com/zirkelc/aws-sigv4-fetch#readme",
-  "license": "MIT",
-  "dependencies": {
-    "@aws-crypto/sha256-js": "^5.2.0",
-    "@aws-sdk/credential-provider-node": "^3.609.0",
-    "@aws-sdk/types": "^3.609.0",
-    "@smithy/protocol-http": "^4.0.3",
-    "@smithy/signature-v4": "^3.1.2"
+    "build": "pnpm -r build",
+    "lint": "pnpm biome check --write --no-errors-on-unmatched .",
+    "release": "pnpm build && pnpm changeset:publish",
+    "changeset:init": "changeset init",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.4",
     "@biomejs/biome": "1.8.3",
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.11",
+    "@changesets/get-github-info": "^0.6.0",
+    "@total-typescript/tsconfig": "^1.0.4",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^22.9.0",
     "@vitest/coverage-v8": "^2.0.4",

@@ -1,6 +1,6 @@
 import { APIGatewayClient, GetRestApisCommand } from "@aws-sdk/client-api-gateway";
+import { createSignedFetcher } from "aws-sigv4-fetch";
 import { describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
 import { API_NAME, REGION, RESOURCE, RESPONSE, SERVICE, STAGE } from "../lib/api-gateway-test-stack.js";
 
 const client = new APIGatewayClient({ region: REGION });
