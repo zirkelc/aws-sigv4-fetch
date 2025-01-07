@@ -38,18 +38,15 @@ function httpRequest(url: string, options: Record<string, any>, body?: string): 
 
 describe("node-http", () => {
   describe("GET", () => {
-    const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
+    const url = "https://iam.amazonaws.com/";
+    const method = "GET";
 
     it("should make request with signed headers", async () => {
       // Arrange
       const signedRequest = await signRequest(url, { service: SERVICE, region: REGION });
-      const options = {
-        method: signedRequest.method,
-        headers: Object.fromEntries(signedRequest.headers.entries()),
-      };
 
       // Act
-      const response = await httpRequest(url, options);
+      const response = await httpRequest(signedRequest.url, { method });
 
       // Assert
       expect(response.status).toBe(200);
@@ -58,10 +55,9 @@ describe("node-http", () => {
 
     it("should fail with unsigned request", async () => {
       // Arrange
-      const options = { method: "GET" };
 
       // Act
-      const response = await httpRequest(url, options);
+      const response = await httpRequest(url, { method });
 
       // Assert
       expect(response.status).toBe(403);
@@ -71,28 +67,18 @@ describe("node-http", () => {
 
   describe("POST", () => {
     const url = "https://iam.amazonaws.com/";
+    const method = "POST";
+    const headers = {
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+    };
     const body = "Action=GetUser&Version=2010-05-08";
 
     it("should make request with signed headers", async () => {
       // Arrange
-      const signedRequest = await signRequest(
-        url,
-        {
-          method: "POST",
-          body,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-          },
-        },
-        { service: SERVICE, region: REGION },
-      );
-      const options = {
-        method: signedRequest.method,
-        headers: Object.fromEntries(signedRequest.headers.entries()),
-      };
+      const signedRequest = await signRequest(url, { method, headers, body }, { service: SERVICE, region: REGION });
 
       // Act
-      const response = await httpRequest(url, options, body);
+      const response = await httpRequest(signedRequest.url, { method, headers }, body);
 
       // Assert
       expect(response.status).toBe(200);
@@ -101,15 +87,9 @@ describe("node-http", () => {
 
     it("should fail with unsigned request", async () => {
       // Arrange
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
-      };
 
       // Act
-      const response = await httpRequest(url, options, body);
+      const response = await httpRequest(url, { method, headers }, body);
 
       // Assert
       expect(response.status).toBe(403);

@@ -1,6 +1,5 @@
 # aws-sigv4-fetch
-A small wrapper around the fetch API to automatically signs HTTP requests with AWS Signature Version 4 (SigV4) authentication.
-Built on the official AWS SDK for JS v3.
+A small wrapper around the fetch API to automatically signs HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK for JS v3.
 
 > [!TIP]
 > If you are using other HTTP libraries like Axios, Ky, Got, or any other HTTP library, consider using the [`aws-sigv4-sign`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-sign) package to sign requests.

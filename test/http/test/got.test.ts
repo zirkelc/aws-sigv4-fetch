@@ -1,11 +1,11 @@
 import { signRequest } from "aws-sigv4-sign";
-import axios from "axios";
+import got from "got";
 import { describe, expect, it } from "vitest";
 
 const SERVICE = "iam";
 const REGION = "us-east-1";
 
-describe("axios", () => {
+describe("got", () => {
   describe("GET", () => {
     const url = "https://iam.amazonaws.com/?Action=GetUser&Version=2010-05-08";
 
@@ -14,18 +14,20 @@ describe("axios", () => {
       const signedRequest = await signRequest(url, { service: SERVICE, region: REGION });
 
       // Act
-      const response = await axios(signedRequest.url, { headers: Object.fromEntries(signedRequest.headers.entries()) });
+      const response = await got(signedRequest.url, {
+        headers: Object.fromEntries(signedRequest.headers.entries()),
+      });
 
       // Assert
-      expect(response.status).toBe(200);
-      expect(response.data?.GetUserResponse).toBeDefined();
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("<GetUserResult>");
     });
 
     it("should fail with unsigned request", async () => {
       // Arrange
 
       // Act
-      const result = axios(url);
+      const result = got(url);
 
       // Assert
       await expect(result).rejects.toThrow();
@@ -45,22 +47,22 @@ describe("axios", () => {
       const signedRequest = await signRequest(url, { method, headers, body }, { service: SERVICE, region: REGION });
 
       // Act
-      const response = await axios(signedRequest.url, {
+      const response = await got(signedRequest.url, {
         method,
         headers: Object.fromEntries(signedRequest.headers.entries()),
-        data: body,
+        body,
       });
 
       // Assert
-      expect(response.status).toBe(200);
-      expect(response.data?.GetUserResponse).toBeDefined();
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("<GetUserResult>");
     });
 
     it("should fail with unsigned request", async () => {
       // Arrange
 
       // Act
-      const result = axios(url, { method, headers, data: body });
+      const result = got(url, { method, headers, body });
 
       // Assert
       await expect(result).rejects.toThrow();

@@ -1,6 +1,5 @@
 # aws-sigv4-sign
-A small library to sign HTTP requests with AWS Signature Version 4 (SigV4) authentication.
-Built on the official AWS SDK for JS v3.
+A small library to sign HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK for JS v3.
 
 > [!TIP]
 > If you are using the `fetch` API, consider using the [`aws-sigv4-fetch`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-fetch) package to automatically sign requests.
@@ -23,7 +22,7 @@ const { signRequest } = require('aws-sigv4-sign');
 
 ## Usage
 This package exports a `signRequest` function that returns a `Request` object with signed headers for AWS Signature V4 (SigV4) authentication.
-The function is overloaded with multiple signatures to make it easier to use.
+The function is overloaded with multiple signatures to make it easy to use.
 
 ```ts
 import { signRequest, SignRequestOptions } from 'aws-sigv4-sign';
@@ -39,16 +38,16 @@ const options: SignRequestOptions = {
 
 const url = 'https://mylambda.lambda-url.eu-west-1.on.aws/';
 
-// signRequest(input: string)
+// signRequest(input: string, options: SignRequestOptions)
 const signedRequest = await signRequest(url, options);
 
-// signRequest(input: URL)
+// signRequest(input: URL, options: SignRequestOptions)
 const signedRequest = await signRequest(new URL(url), options);
 
-// signRequest(input: Request)
+// signRequest(input: Request, options: SignRequestOptions)
 const signedRequest = await signRequest(new Request(url), options);
 
-// signRequest(input: string, init?: RequestInit)
+// signRequest(input: string, init?: RequestInit, options: SignRequestOptions)
 const signedRequest = await signRequest(url,
   {
     method: 'POST',
@@ -59,16 +58,20 @@ const signedRequest = await signRequest(url,
 );
 ```
 
-The return `Request` object contains the signed authorization `headers` with the following keys: `authorization`, `host`, `x-amz-date`, `x-amz-content-sha256`, `x-amz-security-token` (optional).
+The returned `Request` object contains the signed authorization `headers` with the following keys: `authorization`, `host`, `x-amz-date`, `x-amz-content-sha256`, `x-amz-security-token` (optional).
 
 ```ts
-const { headers } = await signRequest(url, options);
+const signedRequest = await signRequest(url, options);
+const { headers } = signedRequest;
 
 console.log(headers.get('authorization')); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
 console.log(headers.get('host')); // mylambda.lambda-url.eu-west-1.on.aws
 console.log(headers.get('x-amz-date')); // 20250101T000000Z
 console.log(headers.get('x-amz-content-sha256')); // ...
 console.log(headers.get('x-amz-security-token')); // only if credentials include a session token
+
+// Fetch the signed request
+const response = await fetch(signedRequest);
 ```
 
 ### Options
@@ -84,14 +87,35 @@ The `signRequest` function accepts the following options:
 
 ## Examples
 
+The following examples show how to sign requests with different HTTP libraries.
+
+### Fetch
+
+```ts
+import { signRequest } from "aws-sigv4-sign";
+
+const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
+const response = await fetch(signedRequest);
+```
+
 ### Axios
 
 ```ts
+import axios from "axios";
+import { signRequest } from "aws-sigv4-sign";
+
+const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
+const response = await axios(signedRequest.url, { headers: Object.fromEntries(signedRequest.headers.entries()) });
 ```
 
 ### Got
 
 ```ts
+import { signRequest } from "aws-sigv4-sign";
+import got from "got";
+
+const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
+const response = await got(signedRequest.url, { headers: signedRequest.headers });
 ```
 
 ### Ky
