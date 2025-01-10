@@ -77,7 +77,7 @@ jobs:
         if: ${{ steps.install.conclusion == 'success' }}
         uses: davelosert/vitest-coverage-report-action@v2
         with:
-          vite-config-path: vitest.config.unit.ts
+          vite-config-path: vitest.base.ts
 
   e2e-test:
     name: E2E Test
