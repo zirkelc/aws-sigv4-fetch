@@ -4,7 +4,7 @@
   "packageManager": "pnpm@9.3.0",
   "type": "module",
   "scripts": {
-    "test:unit": "vitest --project=unit",
+    "test:unit": "vitest --project=unit/*",
     "test:e2e": "vitest --project=e2e/*",
     "build": "pnpm -r build",
     "lint": "pnpm biome check --write --no-errors-on-unmatched .",
