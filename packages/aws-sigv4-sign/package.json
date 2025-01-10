@@ -1,9 +1,10 @@
 {
   "name": "aws-sigv4-sign",
-  "version": "4.2.0",
-  "description": "SignatureV4 sign function implemented with official @aws-sdk v3",
+  "version": "1.0.0",
+  "description": "SignatureV4 sign function implemented with the official @aws-sdk v3",
   "packageManager": "pnpm@9.3.0",
   "type": "module",
+  "main": "./src/index.ts",
   "module": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
@@ -12,17 +13,10 @@
     "access": "public",
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "exports": {
       ".": {
-        "require": {
-          "types": "./dist/index.d.cts",
-          "default": "./dist/index.cjs"
-        },
-        "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/index.js"
-        }
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.js"
       }
     }
   },
@@ -34,7 +28,7 @@
   ],
   "scripts": {
     "test": "vitest",
-    "build": "tsup && attw --pack .",
+    "build": "tsup && pnpm pack | tail -n1 | xargs attw",
     "prepublishOnly": "pnpm build"
   },
   "repository": {

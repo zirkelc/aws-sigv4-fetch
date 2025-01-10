@@ -22,7 +22,7 @@ const { signRequest } = require('aws-sigv4-sign');
 
 ## Usage
 This package exports a `signRequest` function that returns a [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) with signed headers for AWS Signature V4 (SigV4) authentication.
-The function is overloaded with multiple signatures to make it easy to use.
+The function is overloaded with the same signatures as the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch).
 
 ```ts
 import { signRequest, SignRequestOptions } from 'aws-sigv4-sign';
@@ -58,21 +58,26 @@ const signedRequest = await signRequest(url,
 );
 ```
 
-The returned [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) contains the signed authorization `headers` with the following keys: `authorization`, `host`, `x-amz-date`, `x-amz-content-sha256`, `x-amz-security-token` (optional).
+The returned [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) contains the signed authorization [`headers`](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers) with the following keys: `authorization`, `host`, `x-amz-date`, `x-amz-content-sha256`, `x-amz-security-token` (optional).
 
 ```ts
 const signedRequest = await signRequest(url, options);
-const { headers } = signedRequest;
-
-console.log(headers.get('authorization')); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
-console.log(headers.get('host')); // mylambda.lambda-url.eu-west-1.on.aws
-console.log(headers.get('x-amz-date')); // 20250101T000000Z
-console.log(headers.get('x-amz-content-sha256')); // ...
-console.log(headers.get('x-amz-security-token')); // only if credentials include a session token
-
 // Fetch the signed request
 const response = await fetch(signedRequest);
+
+// Log the signed headers from the request
+console.log(signedRequest.headers.get('authorization')); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
+console.log(signedRequest.headers.get('host')); // mylambda.lambda-url.eu-west-1.on.aws
+console.log(signedRequest.headers.get('x-amz-date')); // 20250101T000000Z
+console.log(signedRequest.headers.get('x-amz-content-sha256')); // ...
+console.log(signedRequest.headers.get('x-amz-security-token')); // only if credentials include a session token
+
+// Convert the signed headers to plain object
+const headers = Object.fromEntries(signedRequest.headers.entries());
+console.log(headers.authorization); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
 ```
+
+The `headers` is a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) object and can be converted to plain object.
 
 ### Options
 
@@ -87,11 +92,9 @@ The `signRequest` function accepts the following options:
 
 ## Examples
 
-The following examples show how to sign requests with different HTTP libraries.
+The following examples show how to use the signed request with different HTTP libraries.
 
 ### Fetch
-
-The signed [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) can be passed directly to the `fetch` API.
 
 ```ts
 import { signRequest } from "aws-sigv4-sign";
@@ -101,7 +104,6 @@ const response = await fetch(signedRequest);
 ```
 
 ### Axios
-
 ```ts
 import axios from "axios";
 import { signRequest } from "aws-sigv4-sign";
@@ -117,17 +119,7 @@ import { signRequest } from "aws-sigv4-sign";
 import got from "got";
 
 const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
-const response = await got(signedRequest.url, { headers: signedRequest.headers });
-```
-
-### Ky
-
-```ts
-```
-
-### node:https
-
-```ts
+const response = await got(signedRequest.url, { headers: Object.fromEntries(signedRequest.headers.entries()) });
 ```
 
 ## License
