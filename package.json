@@ -6,6 +6,7 @@
   "scripts": {
     "test:unit": "vitest --project=unit/*",
     "test:e2e": "vitest --project=e2e/*",
+    "test:cov": "pnpm test:unit --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json",
     "build": "pnpm -r build",
     "lint": "pnpm biome check --write --no-errors-on-unmatched .",
     "release": "pnpm build && pnpm changeset:publish",
