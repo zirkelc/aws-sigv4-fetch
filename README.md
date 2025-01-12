@@ -16,9 +16,9 @@ This repository contains two libraries to sign HTTP requests with AWS Signature 
 
 ## Which library should I use?
 
-### Are you using the `fetch` API?
+### Are you using the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch)?
 
-Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed fetch function:
+Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) function:
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
@@ -30,7 +30,7 @@ const response = await signedFetch('https://mylambda.lambda-url.eu-west-1.on.aws
 
 ### Are you using `Axios`, `Ky`, `Got`, `node:http` or any other HTTP library?
 
-Install the `aws-sigv4-sign` package and use the `signRequest` function to create a signed request:
+Install the `aws-sigv4-sign` package and use the `signRequest` function to create a signed [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object:
 
 ```ts
 import { signRequest } from 'aws-sigv4-sign';
@@ -62,9 +62,9 @@ const response = await got(signedRequest);
 const response = await httpRequest(signedRequest);
 ```
 
-### Are you using `graphql-request`?
+### Are you using [`graphql-request`](https://www.npmjs.com/package/graphql-request)?
 
-Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed fetch function and pass it to the `fetch` option of the `GraphQLClient`:
+Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) function and pass it to the [`fetch`](https://github.com/graffle-js/graffle/blob/b732f4595b2619cc0f0c23e69e8316f37e29713b/src/legacy/helpers/types.ts#L63-L71) option of the [`GraphQLClient`](https://github.com/graffle-js/graffle/blob/b732f4595b2619cc0f0c23e69e8316f37e29713b/src/legacy/classes/GraphQLClient.ts#L20-L21):
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
@@ -96,7 +96,7 @@ const result = await client.request(query, variables);
 
 ## Usage
 
-Go to the docs of [aws-sigv4-fetch](packages/aws-sigv4-fetch/README.md) or [aws-sigv4-sign](packages/aws-sigv4-sign/README.md) for more information.
+Go to the docs of [aws-sigv4-fetch](./packages/aws-sigv4-fetch/README.md) or [aws-sigv4-sign](./packages/aws-sigv4-sign/README.md) for more information.
 
 ## Resources
 - [Sign GraphQL Request with AWS IAM and Signature V4](https://dev.to/zirkelc/sign-graphql-request-with-aws-iam-and-signature-v4-2il6)
