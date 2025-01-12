@@ -1,8 +1,8 @@
 # aws-sigv4-sign
-A small library to sign HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK for JS v3.
+A small library for signing HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK.
 
 > [!TIP]
-> If you are using the `fetch` API, consider using the [`aws-sigv4-fetch`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-fetch) package to automatically sign requests.
+> If you are using the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch), consider using the [`aws-sigv4-fetch`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-fetch) package to automatically sign requests.
 
 ## Install
 ```sh
@@ -62,6 +62,7 @@ The returned [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API
 
 ```ts
 const signedRequest = await signRequest(url, options);
+
 // Fetch the signed request
 const response = await fetch(signedRequest);
 
@@ -77,7 +78,7 @@ const headers = Object.fromEntries(signedRequest.headers.entries());
 console.log(headers.authorization); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
 ```
 
-The `headers` is a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) object and can be converted to plain object.
+The `headers` is a [`Headers`](https://developer.mozilla.org/en-US/docs/Web/API/Headers) object and can be converted to plain object for use with other HTTP libraries.
 
 ### Options
 
