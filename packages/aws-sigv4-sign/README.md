@@ -2,7 +2,7 @@
 A small library for signing HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK.
 
 > [!TIP]
-> If you are using the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch), consider using the [`aws-sigv4-fetch`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-fetch) package to automatically sign requests.
+> If you are using the [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) API, consider using the [`aws-sigv4-fetch`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-fetch) package to automatically sign requests.
 
 ## Install
 ```sh
@@ -21,8 +21,8 @@ const { signRequest } = require('aws-sigv4-sign');
 ```
 
 ## Usage
-This package exports a `signRequest` function that returns a [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) with signed headers for AWS Signature V4 (SigV4) authentication.
-The function is overloaded with the same signature as the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch) and an optional `options` parameter.
+This package exports a `signRequest` function that returns a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object with signed headers for AWS Signature V4 (SigV4) authentication.
+The function is overloaded with the same signature as the [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) API and an optional `options` parameter.
 
 ```ts
 import { signRequest, SignRequestOptions } from 'aws-sigv4-sign';
@@ -58,7 +58,7 @@ const signedRequest = await signRequest(url,
 );
 ```
 
-The returned [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) contains the signed authorization [`headers`](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers) with the following keys: `authorization`, `host`, `x-amz-date`, `x-amz-content-sha256`, `x-amz-security-token` (optional).
+The returned [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object contains the signed authorization [`headers`](https://developer.mozilla.org/en-US/docs/Web/API/Response/headers) with the following keys: `authorization`, `host`, `x-amz-date`, `x-amz-content-sha256`, `x-amz-security-token` (optional).
 
 ```ts
 const signedRequest = await signRequest(url, options);

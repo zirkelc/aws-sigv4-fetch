@@ -1,7 +1,7 @@
 {
   "name": "aws-sigv4-fetch",
   "version": "4.2.0",
-  "description": "SignatureV4 fetch function implemented with the official @aws-sdk v3",
+  "description": "SignatureV4 fetch function implemented with the official AWS SDK",
   "packageManager": "pnpm@9.3.0",
   "type": "module",
   "main": "./src/index.ts",
@@ -54,7 +54,9 @@
     "signaturev4"
   ],
   "dependencies": {
-    "@aws-sdk/types": "^3.609.0",
     "aws-sigv4-sign": "workspace:*"
+  },
+  "devDependencies": {
+    "@aws-sdk/types": "^3.609.0"
   }
 }

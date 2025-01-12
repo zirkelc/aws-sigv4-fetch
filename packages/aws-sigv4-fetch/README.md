@@ -1,5 +1,5 @@
 # aws-sigv4-fetch
-A small wrapper around the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch) to automatically sign HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK.
+A small wrapper around the [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) API to automatically sign HTTP requests with AWS Signature Version 4 (SigV4) authentication, built with the official AWS SDK.
 
 > [!TIP]
 > If you are using other HTTP libraries like Axios, Ky, Got, or any other HTTP library, consider using the [`aws-sigv4-sign`](https://github.com/zirkelc/aws-sigv4/tree/main/packages/aws-sigv4-sign) package to sign requests.
@@ -139,8 +139,8 @@ const response = await signedFetch('https://mygraphqlapi.appsync-api.eu-west-1.a
 });
 ```
 
-### Automatically sign GraphQL Requests with `graphql-request`
-If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch` option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
+### Automatically sign GraphQL Requests with [`graphql-request`](https://www.npmjs.com/package/graphql-request)
+If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can use the `createSignedFetcher` function to create a signed [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) function and pass it to the [`fetch`](https://github.com/graffle-js/graffle/blob/b732f4595b2619cc0f0c23e69e8316f37e29713b/src/legacy/helpers/types.ts#L63-L71) option of the [`GraphQLClient`](https://github.com/graffle-js/graffle/blob/b732f4595b2619cc0f0c23e69e8316f37e29713b/src/legacy/classes/GraphQLClient.ts#L20-L21):
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';

@@ -74,12 +74,13 @@ importers:
 
   packages/aws-sigv4-fetch:
     dependencies:
-      '@aws-sdk/types':
-        specifier: ^3.609.0
-        version: 3.714.0
       aws-sigv4-sign:
         specifier: workspace:*
         version: link:../aws-sigv4-sign
+    devDependencies:
+      '@aws-sdk/types':
+        specifier: ^3.609.0
+        version: 3.714.0
 
   packages/aws-sigv4-sign:
     dependencies:
@@ -89,15 +90,16 @@ importers:
       '@aws-sdk/credential-provider-node':
         specifier: ^3.609.0
         version: 3.716.0(@aws-sdk/client-sso-oidc@3.716.0(@aws-sdk/client-sts@3.716.0))(@aws-sdk/client-sts@3.716.0)
-      '@aws-sdk/types':
-        specifier: ^3.609.0
-        version: 3.714.0
       '@smithy/protocol-http':
         specifier: ^4.0.3
         version: 4.1.8
       '@smithy/signature-v4':
         specifier: ^3.1.2
         version: 3.1.2
+    devDependencies:
+      '@aws-sdk/types':
+        specifier: ^3.609.0
+        version: 3.714.0
 
   test/aws:
     devDependencies:

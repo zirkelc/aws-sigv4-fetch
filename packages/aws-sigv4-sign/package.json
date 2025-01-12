@@ -1,7 +1,7 @@
 {
   "name": "aws-sigv4-sign",
   "version": "1.0.0",
-  "description": "SignatureV4 sign function implemented with the official @aws-sdk v3",
+  "description": "SignatureV4 sign function implemented with the official AWS SDK",
   "packageManager": "pnpm@9.3.0",
   "type": "module",
   "main": "./src/index.ts",
@@ -59,8 +59,10 @@
   "dependencies": {
     "@aws-crypto/sha256-js": "^5.2.0",
     "@aws-sdk/credential-provider-node": "^3.609.0",
-    "@aws-sdk/types": "^3.609.0",
     "@smithy/protocol-http": "^4.0.3",
     "@smithy/signature-v4": "^3.1.2"
+  },
+  "devDependencies": {
+    "@aws-sdk/types": "^3.609.0"
   }
 }
