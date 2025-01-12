@@ -6,8 +6,8 @@
 
 This repository contains two libraries to sign HTTP requests with AWS Signature Version 4 (SigV4):
 
-- [`aws-sigv4-fetch`](https://www.npmjs.com/package/aws-sigv4-fetch) creates a `fetch` function to automatically sign HTTP requests.
-- [`aws-sigv4-sign`](https://www.npmjs.com/package/aws-sigv4-sign) creates a `Request` object with signed headers that can be used with any other HTTP library.
+- [`aws-sigv4-fetch`](./packages/aws-sigv4-fetch/README.md) creates a `fetch` function to automatically sign HTTP requests.
+- [`aws-sigv4-sign`](./packages/aws-sigv4-sign/README.md) creates a `Request` object with signed headers that can be used with any other HTTP library.
 
 ## What is Signature Version 4?
 > Signature Version 4 (SigV4) is the process to add authentication information to AWS API requests sent by HTTP. For security, most requests to AWS must be signed with an access key. The access key consists of an access key ID and secret access key, which are commonly referred to as your security credentials
