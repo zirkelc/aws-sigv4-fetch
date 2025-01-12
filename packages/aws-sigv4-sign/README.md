@@ -22,7 +22,7 @@ const { signRequest } = require('aws-sigv4-sign');
 
 ## Usage
 This package exports a `signRequest` function that returns a [`Request` object](https://developer.mozilla.org/en-US/docs/Web/API/Request) with signed headers for AWS Signature V4 (SigV4) authentication.
-The function is overloaded with the same signatures as the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch).
+The function is overloaded with the same signature as the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch) and an optional `options` parameter.
 
 ```ts
 import { signRequest, SignRequestOptions } from 'aws-sigv4-sign';
