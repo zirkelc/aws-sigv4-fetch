@@ -1,151 +1,70 @@
-[![CI](https://github.com/zirkelc/aws-sigv4-fetch/actions/workflows/ci.yml/badge.svg)](https://github.com/zirkelc/aws-sigv4-fetch/actions/workflows/ci.yml)
+[![CI](https://github.com/zirkelc/aws-sigv4/actions/workflows/ci.yml/badge.svg)](https://github.com/zirkelc/aws-sigv4/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/aws-sigv4-fetch)](https://www.npmjs.com/package/aws-sigv4-fetch)
 [![npm](https://img.shields.io/npm/dt/aws-sigv4-fetch)](https://www.npmjs.com/package/aws-sigv4-fetch)
 
-# aws-sigv4-fetch
-A lightweight wrapper around the fetch API that automatically signs HTTP requests with AWS Signature Version 4 (SigV4) authentication. Built on the official AWS SDK for JS v3.
+# AWS SigV4 libraries
 
-## Signature Version 4
+This repository contains two libraries to sign HTTP requests with AWS Signature Version 4 (SigV4):
+
+- `aws-sigv4-fetch` creates a `fetch` function to automatically sign HTTP requests.
+- `aws-sigv4-sign` creates a `Request` object with signed headers that can be used with any other HTTP library.
+
+## What is Signature Version 4?
 > Signature Version 4 (SigV4) is the process to add authentication information to AWS API requests sent by HTTP. For security, most requests to AWS must be signed with an access key. The access key consists of an access key ID and secret access key, which are commonly referred to as your security credentials
 
 [AWS documentation on Signature Version 4 signing process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
 
-## Install
-```sh
-npm install --save aws-sigv4-fetch
-```
+## Which library should I use?
 
-## ESM and CommonJS
-This package ships with ES Module and CommonJS support. That means you can `import` or `require` the package in your project depending on your module format.
+### Are you using the `fetch` API?
 
-```ts
-// ESM
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-
-// CommonJS
-const { createSignedFetcher } = require('aws-sigv4-fetch');
-```
-
-## Usage
-This package exports a function `createSignedFetcher` that returns a `fetch` function to automatically sign HTTP requests with AWS Signature V4 for the given AWS service and region.
-The returned `signedFetch` function accepts the same arguments as the default `fetch` function.
-
+Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed fetch function:
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
 
-const signedFetch = createSignedFetcher({ service: 's3', region: 'eu-west-1' });
-
-// signedFetch(input: string)
-const response = await signedFetch('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json');
-
-// signedFetch(input: URL)
-const response = await signedFetch(new URL('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json'));
-
-// signedFetch(input: Request)
-const response = await signedFetch(new Request('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json'));
-
-// signedFetch(input: string, init?: RequestInit)
-const response = await signedFetch('https://s3.eu-west-1.amazonaws.com/my-bucket/my-key.json', {
-  method: 'POST',
-  body: JSON.stringify({ a: 1 }),
-  headers: { 'Content-Type': 'application/json' }
-});
-```
-
-## API
-The `createSignedFetcher(options: SignedFetcherOptions)` function accepts the following options:
-
-```ts
-type SignedFetcherOptions = {
-  service: string;
-  region?: string;
-  credentials?: AwsCredentialIdentity;
-  fetch?: typeof fetch;
-};
-```
-
-### Service
-The `service` is required and must match the AWS service you are signing requests for.
-If it doesn't match, the request will fail with an error like:
-> Credential should be scoped to correct service: 'service'
-
-### Region
-The `region` is optional and defaults to `us-east-1` if not provided. Some services like IAM are global and don't require a region.
-
-### Credentials
-The `credentials` is optional. If not provided, the credentials will be retrieved from the environment by the package [`@aws-sdk/credential-provider-node`](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/modules/_aws_sdk_credential_provider_node.html).
-
-```ts
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-
-// credentials will be retrieved from the environment
-const signedFetch = createSignedFetcher({ service: 's3', region: 'eu-west-1' });
-
-// credentials will be passed directly to the function
-const signedFetch = createSignedFetcher({ service: 's3', region: 'eu-west-1', credentials: { accessKeyId: '...', secretAccessKey: '...' } });
-```
-
-### Fetch
-The `fetch` function is optional. If not provided, the `fetch` function from the environment will be used. Native `fetch` is supported in Node.js >= v18. If you are running in an environment where native `fetch` is **not** available, the `fetch` function must be polyfilled or provided as an argument to `createSignedFetcher`. This allows to use the same `fetch` function that is already used in your application. There are several ways to do this:
-
-#### Native `fetch`
-If native `fetch` is available, you don't have to pass it as argument to `createSignedFetcher`.
-
-```ts
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-
-// native fetch is available and doesn't have to be passed as argument
-const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1' });
-```
-
-#### Polyfill `fetch`
-Install a fetch package like [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) and import it as [polyfill](https://en.wikipedia.org/wiki/Polyfill_(programming)). The `fetch` function will be available **globally** after importing the polyfill.
-
-```ts
-import 'cross-fetch/polyfill';
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-
-// fetch was imported globally and doesn't have to be passed as argument
-const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1' });
-```
-
-#### Pass `fetch` as an argument
-Install a fetch package like [`cross-fetch`](https://www.npmjs.com/package/cross-fetch) and import it as [ponyfill](https://github.com/sindresorhus/ponyfill). The `fetch` function will be available **locally** after importing the ponyfill. Pass the `fetch` function as an argument to `createSignedFetcher`:
-
-```ts
-import fetch from 'cross-fetch';
-import { createSignedFetcher } from 'aws-sigv4-fetch';
-
-// fetch was imported locally and must be passed as argument
-const signedFetch = createSignedFetcher({ service: 'iam', region: 'eu-west-1', fetch });
-```
-
-## Examples
-
-### AWS
-Here are some examples of common AWS services.
-
-```ts
-// API Gateway
-const signedFetch = createSignedFetcher({ service: 'execute-api', region: 'eu-west-1' });
-const response = await signedFetch('https://myapi.execute-api.eu-west-1.amazonaws.com/my-stage/my-resource');
-
-// Lambda Function URL
 const signedFetch = createSignedFetcher({ service: 'lambda', region: 'eu-west-1' });
-const response = await signedFetch(new URL('https://mylambda.lambda-url.eu-west-1.on.aws/'));
 
-// AppSync
-const signedFetch = createSignedFetcher({ service: 'appsync', region: 'eu-west-1' });
-const response = await signedFetch('https://mygraphqlapi.appsync-api.eu-west-1.amazonaws.com/graphql', {
-  method: 'POST',
-  body: JSON.stringify({ a: 1 }),
-  headers: {'Content-Type': 'application/json'}
-});
+const response = await signedFetch('https://mylambda.lambda-url.eu-west-1.on.aws/');
 ```
 
-### Automatically sign GraphQL Requests with `graphql-request`
-If you are using [`graphql-request`](https://www.npmjs.com/package/graphql-request) as GraphQL library, you can easily sign all HTTP requests. The library has `fetch` option to pass a [custom `fetch` method](https://github.com/prisma-labs/graphql-request#using-a-custom-fetch-method):
+### Are you using `Axios`, `Ky`, `Got`, `node:http` or any other HTTP library?
+
+Install the `aws-sigv4-sign` package and use the `signRequest` function to create a signed request:
+
+```ts
+import { signRequest } from 'aws-sigv4-sign';
+import axios from 'axios';
+
+const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', {
+  service: 'lambda',
+  region: 'eu-west-1'
+});
+
+const { headers } = signedRequest;
+
+console.log(headers.get('authorization')); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
+console.log(headers.get('host')); // mylambda.lambda-url.eu-west-1.on.aws
+console.log(headers.get('x-amz-date')); // 20250101T000000Z
+console.log(headers.get('x-amz-content-sha256')); // ...
+console.log(headers.get('x-amz-security-token')); // only if credentials include a session token
+
+// Axios
+const response = await axios(signedRequest);
+
+// Ky
+const response = await ky.request(signedRequest);
+
+// Got
+const response = await got(signedRequest);
+
+// node:http
+const response = await httpRequest(signedRequest);
+```
+
+### Are you using `graphql-request`?
+
+Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed fetch function and pass it to the `fetch` option of the `GraphQLClient`:
 
 ```ts
 import { createSignedFetcher } from 'aws-sigv4-fetch';
@@ -174,6 +93,10 @@ const client = new GraphQLClient('https://mygraphqlapi.appsync-api.eu-west-1.ama
 
 const result = await client.request(query, variables);
 ```
+
+## Usage
+
+Go to the docs of [aws-sigv4-fetch](packages/aws-sigv4-fetch/README.md) or [aws-sigv4-sign](packages/aws-sigv4-sign/README.md) for more information.
 
 ## Resources
 - [Sign GraphQL Request with AWS IAM and Signature V4](https://dev.to/zirkelc/sign-graphql-request-with-aws-iam-and-signature-v4-2il6)

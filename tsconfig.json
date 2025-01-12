@@ -9,7 +9,6 @@
     "allowJs": true,
   },
   "include": [
-    "src/**/*.ts",
     "vitest.*.ts",
   ],
 }

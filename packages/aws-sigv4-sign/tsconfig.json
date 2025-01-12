@@ -2,7 +2,7 @@
   "extends": "@total-typescript/tsconfig/bundler/no-dom",
   "compilerOptions": {},
   "include": [
-    "**/*.ts",
+    "src/**/*.ts",
     "vitest.*.ts",
   ],
 }

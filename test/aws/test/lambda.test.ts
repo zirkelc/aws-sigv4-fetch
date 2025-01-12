@@ -1,6 +1,6 @@
 import { GetFunctionUrlConfigCommand, LambdaClient } from "@aws-sdk/client-lambda";
+import { createSignedFetcher } from "aws-sigv4-fetch";
 import { describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
 import { FUNCTION_NAME, REGION, RESPONSE, SERVICE } from "../lib/lambda-test-stack.js";
 
 const client = new LambdaClient({ region: REGION });
@@ -22,9 +22,7 @@ describe("Lambda Function URL", () => {
         const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
         // Act
-        const response = await signedFetch(url, {
-          method: "GET",
-        });
+        const response = await signedFetch(url);
 
         // Assert
         expect(response.status).toBe(200);
@@ -75,6 +73,11 @@ describe("Lambda Function URL", () => {
   describe("POST", () => {
     describe.each(paths)("Path: %s", (path) => {
       const url = `${functionUrl}${path}`;
+      const method = "POST";
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const body = JSON.stringify({});
 
       it("should fetch with string", async () => {
         // Arrange
@@ -82,11 +85,9 @@ describe("Lambda Function URL", () => {
 
         // Act
         const response = await signedFetch(url, {
-          method: "POST",
-          body: JSON.stringify({}),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          method,
+          body,
+          headers,
         });
 
         // Assert
@@ -122,11 +123,9 @@ describe("Lambda Function URL", () => {
 
         // Act
         const response = await fetch(url, {
-          method: "POST",
-          body: JSON.stringify({}),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          method,
+          body,
+          headers,
         });
 
         // Assert

@@ -1,0 +1,16 @@
+{
+  "name": "aws-sigv4-test-http",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "aws-sigv4-fetch": "workspace:*",
+    "aws-sigv4-sign": "workspace:*"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "got": "^14.4.5"
+  }
+}

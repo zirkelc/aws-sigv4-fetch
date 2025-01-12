@@ -1,6 +1,6 @@
 import "cross-fetch/polyfill";
+import { createSignedFetcher } from "aws-sigv4-fetch";
 import { describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
 
 const SERVICE = "iam";
 const REGION = "us-east-1";
@@ -57,7 +57,6 @@ describe("IAM", () => {
 
       // Act
       const response = await signedFetch(url, {
-        method: "GET",
         headers: {
           "x-amz-test-header": "test-value",
           "x-api-key": "test-api-key",
@@ -105,6 +104,10 @@ describe("IAM", () => {
 
   describe("POST", () => {
     const url = "https://iam.amazonaws.com/";
+    const method = "POST";
+    const headers = {
+      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+    };
     const body = "Action=GetUser&Version=2010-05-08";
 
     it("should fetch with string", async () => {
@@ -113,11 +116,9 @@ describe("IAM", () => {
 
       // Act
       const response = await signedFetch(url, {
-        method: "POST",
+        method,
         body,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
+        headers,
       });
 
       // Assert
@@ -133,11 +134,9 @@ describe("IAM", () => {
 
       // Act
       const response = await signedFetch(new URL(url), {
-        method: "POST",
+        method,
         body,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
+        headers,
       });
 
       // Assert
@@ -153,11 +152,9 @@ describe("IAM", () => {
 
       // Act
       const response = await signedFetch(new Request(url), {
-        method: "POST",
+        method,
         body,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
+        headers,
       });
 
       // Assert
@@ -172,11 +169,9 @@ describe("IAM", () => {
 
       // Act
       const response = await fetch(url, {
-        method: "POST",
+        method,
         body,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-        },
+        headers,
       });
 
       // Assert

@@ -1,6 +1,6 @@
 import { APIGatewayClient, GetRestApisCommand } from "@aws-sdk/client-api-gateway";
+import { createSignedFetcher } from "aws-sigv4-fetch";
 import { describe, expect, it } from "vitest";
-import { createSignedFetcher } from "../../dist/index.js";
 import { API_NAME, REGION, RESOURCE, RESPONSE, SERVICE, STAGE } from "../lib/api-gateway-test-stack.js";
 
 const client = new APIGatewayClient({ region: REGION });
@@ -25,9 +25,7 @@ describe("APIGateway", () => {
         const signedFetch = createSignedFetcher({ service: SERVICE, region: REGION });
 
         // Act
-        const response = await signedFetch(url, {
-          method: "GET",
-        });
+        const response = await signedFetch(url);
 
         // Assert
         expect(response.status).toBe(200);
@@ -68,9 +66,7 @@ describe("APIGateway", () => {
         // Arrange
 
         // Act
-        const response = await fetch(url, {
-          method: "GET",
-        });
+        const response = await fetch(url);
 
         // Assert
         expect(response.status).toBe(403);
@@ -82,6 +78,7 @@ describe("APIGateway", () => {
   describe("POST", () => {
     describe.each(paths)("Path: %s", async (path) => {
       const url = `${apiRootUrl}${path}`;
+      const method = "POST";
 
       it("should fetch with string", async () => {
         // Arrange
@@ -89,7 +86,7 @@ describe("APIGateway", () => {
 
         // Act
         const response = await signedFetch(url, {
-          method: "POST",
+          method,
           body: JSON.stringify({}),
           headers: {
             "Content-Type": "application/json",
@@ -136,7 +133,7 @@ describe("APIGateway", () => {
 
         // Act
         const response = await fetch(url, {
-          method: "POST",
+          method,
           body: JSON.stringify({}),
           headers: {
             "Content-Type": "application/json",
