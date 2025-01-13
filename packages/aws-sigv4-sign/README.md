@@ -95,7 +95,7 @@ The `signRequest` function accepts the following options:
 
 The following examples show how to use the signed request with different HTTP libraries.
 
-### Fetch
+### [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
 
 ```ts
 import { signRequest } from "aws-sigv4-sign";
@@ -104,23 +104,72 @@ const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.o
 const response = await fetch(signedRequest);
 ```
 
-### Axios
+### [Axios](https://github.com/axios/axios)
 ```ts
 import axios from "axios";
 import { signRequest } from "aws-sigv4-sign";
 
 const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
-const response = await axios(signedRequest.url, { headers: Object.fromEntries(signedRequest.headers.entries()) });
+const headers = Object.fromEntries(signedRequest.headers.entries());
+const response = await axios(signedRequest.url, { headers });
 ```
 
-### Got
+### [Got](https://github.com/sindresorhus/got)
 
 ```ts
 import { signRequest } from "aws-sigv4-sign";
 import got from "got";
 
 const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
-const response = await got(signedRequest.url, { headers: Object.fromEntries(signedRequest.headers.entries()) });
+const headers = Object.fromEntries(signedRequest.headers.entries());
+const response = await got(signedRequest.url, { headers });
+```
+
+### [Ky](https://github.com/sindresorhus/ky)
+
+```ts
+import { signRequest } from "aws-sigv4-sign";
+import ky from "ky";
+
+const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
+const headers = Object.fromEntries(signedRequest.headers.entries());
+const response = await ky.get(signedRequest.url, { headers });
+```
+
+### [node:https](https://nodejs.org/api/https.html)
+
+```ts
+import { signRequest } from "aws-sigv4-sign";
+import { request } from "node:https";
+
+const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', { service: 'lambda', region: 'eu-west-1' });
+const headers = Object.fromEntries(signedRequest.headers.entries());
+const body = "";
+const response = new Promise((resolve, reject) => {
+  const req = request(signedRequest.url, { headers }, (res) => {
+    let data = "";
+
+    res.on("data", (chunk) => {
+      data += chunk;
+    });
+
+    res.on("end", () =>
+      resolve({
+        status: res.statusCode ?? 0,
+        statusText: res.statusMessage,
+        data,
+      }),
+    );
+  });
+
+  req.on("error", reject);
+
+  if (body) {
+    req.write(body);
+  }
+
+  req.end();
+});
 ```
 
 ## License

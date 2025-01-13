@@ -16,7 +16,7 @@ This repository contains two libraries to sign HTTP requests with AWS Signature 
 
 ## Which library should I use?
 
-### Are you using the [`fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/fetch)?
+### Are you using the [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) API?
 
 Install the `aws-sigv4-fetch` package and use the `createSignedFetcher` function to create a signed [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch) function:
 
@@ -28,38 +28,34 @@ const signedFetch = createSignedFetcher({ service: 'lambda', region: 'eu-west-1'
 const response = await signedFetch('https://mylambda.lambda-url.eu-west-1.on.aws/');
 ```
 
-### Are you using `Axios`, `Ky`, `Got`, `node:http` or any other HTTP library?
+### Are you using [`Axios`](https://github.com/axios/axios), [`Ky`](https://github.com/sindresorhus/ky), [`Got`](https://github.com/sindresorhus/got), [`node:http`](https://nodejs.org/api/https.html) or any other HTTP library?
 
 Install the `aws-sigv4-sign` package and use the `signRequest` function to create a signed [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) object:
 
 ```ts
 import { signRequest } from 'aws-sigv4-sign';
-import axios from 'axios';
 
-const signedRequest = await signRequest('https://mylambda.lambda-url.eu-west-1.on.aws/', {
+const url = 'https://mylambda.lambda-url.eu-west-1.on.aws/';
+
+const signedRequest = await signRequest(url, {
   service: 'lambda',
   region: 'eu-west-1'
 });
 
-const { headers } = signedRequest;
-
-console.log(headers.get('authorization')); // AWS4-HMAC-SHA256 Credential=.../20250101/us-east-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-content-sha256;x-amz-security-token, Signature=...
-console.log(headers.get('host')); // mylambda.lambda-url.eu-west-1.on.aws
-console.log(headers.get('x-amz-date')); // 20250101T000000Z
-console.log(headers.get('x-amz-content-sha256')); // ...
-console.log(headers.get('x-amz-security-token')); // only if credentials include a session token
+// Convert headers to a plain object
+const headers = Object.fromEntries(signedRequest.headers.entries());
 
 // Axios
-const response = await axios(signedRequest);
+import axios from "axios";
+const response = await axios(url, { headers });
 
 // Ky
-const response = await ky.request(signedRequest);
+import ky from "ky";
+const response = await ky.get(url, { headers });
 
 // Got
-const response = await got(signedRequest);
-
-// node:http
-const response = await httpRequest(signedRequest);
+import got from "got";
+const response = await got(url, { headers });
 ```
 
 ### Are you using [`graphql-request`](https://www.npmjs.com/package/graphql-request)?
